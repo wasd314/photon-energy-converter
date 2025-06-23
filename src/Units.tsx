@@ -1,17 +1,18 @@
 interface UnitProps {
-  // 1 {この単位} が x J に相当するときの x
+  /** 1 {この単位} が x J に相当するときの x */
   coefficient: number;
-  // true: 正比例, false: 反比例
+  /** true: 正比例, false: 反比例 */
   proportional: boolean;
-  // 物理量の名前
+  /** 物理量の名前 */
   quantityName: string;
-  // katex 表示の物理量
+  /** katex 表示の物理量 */
   mathQuantity: string;
-  // katex 表示の単位
+  /** katex 表示の単位 */
   mathUnit: string;
 }
 export const units: UnitProps[] = [
   {
+    // J / J
     coefficient: 1,
     proportional: true,
     quantityName: 'Energy',
@@ -19,84 +20,101 @@ export const units: UnitProps[] = [
     mathUnit: '\\mathrm{J}',
   },
   {
-    coefficient: 1.60218e-19,
+    // e / C
+    // = e / J V^-1
+    coefficient: 1.602176634e-19,
     proportional: true,
     quantityName: '',
     mathQuantity: '',
     mathUnit: '\\mathrm{eV}',
   },
   {
-    coefficient: 1.98645e-25,
+    // h c / J m
+    // eslint-disable-next-line no-loss-of-precision
+    coefficient: 1.9864458571489287e-25,
     proportional: false,
     quantityName: 'Wavelength',
     mathQuantity: '\\lambda',
     mathUnit: '\\mathrm{m}',
   },
   {
-    coefficient: 1.98645e-16,
+    // h c / J nm
+    coefficient: 1.9864458571489287e-16,
     proportional: false,
     quantityName: '',
     mathQuantity: '',
     mathUnit: '\\mathrm{nm}',
   },
   {
-    coefficient: 1.98645e-23,
+    // h c / J cm
+    // eslint-disable-next-line no-loss-of-precision
+    coefficient: 1.9864458571489287e-23,
     proportional: true,
     quantityName: 'Wavenumber',
     mathQuantity: '\\tilde{\\nu}',
     mathUnit: '\\mathrm{cm}^{-1}',
   },
   {
-    coefficient: 6.62607e-34,
+    // h / J s
+    coefficient: 6.62607015e-34,
     proportional: false,
     quantityName: 'Period',
     mathQuantity: '\\tau',
     mathUnit: '\\mathrm{s}',
   },
   {
-    coefficient: 6.62607e-19,
+    // h / J fs
+    coefficient: 6.62607015e-19,
     proportional: false,
     quantityName: '',
     mathQuantity: '',
     mathUnit: '\\mathrm{fs}',
   },
   {
-    coefficient: 6.62607e-34,
+    // h / J s
+    coefficient: 6.62607015e-34,
     proportional: true,
     quantityName: 'Frequency',
     mathQuantity: '\\nu',
     mathUnit: '\\mathrm{Hz}',
   },
   {
-    coefficient: 6.62607e-22,
+    // h / J THz^-1
+    // = h / J ps
+    coefficient: 6.62607015e-22,
     proportional: true,
     quantityName: '',
     mathQuantity: '',
     mathUnit: '\\mathrm{THz}',
   },
   {
-    coefficient: 1.05457e-34,
+    // hbar / J s rad^-1
+    coefficient: 6.62607015e-34 / (2 * Math.PI),
     proportional: true,
     quantityName: 'Angular frequency',
     mathQuantity: '\\omega',
     mathUnit: '\\mathrm{rad}\\, \\mathrm{s}^{-1}',
   },
   {
-    coefficient: 1.05457e-19,
+    // hbar / J fs rad^-1
+    coefficient: 6.62607015e-19 / (2 * Math.PI),
     proportional: true,
     quantityName: '',
     mathQuantity: '',
     mathUnit: '\\mathrm{rad}\\, \\mathrm{fs}^{-1}',
   },
   {
-    coefficient: 1.38065e-23,
+    // k_B / J K^-1
+    coefficient: 1.380649e-23,
     proportional: true,
     quantityName: 'Temperature',
     mathQuantity: 'T',
     mathUnit: '\\mathrm{K}',
   },
   {
-    coefficient: 9.27401e-24,
+    // µ_B / J T^-1
+    // (not a defining constant)
+    coefficient: 9.2740100783e-24,
     proportional: true,
     quantityName: 'Magnetic flux density',
     mathQuantity: 'B',
