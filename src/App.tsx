@@ -14,7 +14,7 @@ const App = () => {
         : coefficient / newEnergy;
       // return newValue.toExponential(5);
       // return newValue.toFixed(5);
-      return newValue.toPrecision(6);
+      return newValue.toPrecision(10);
     });
     setValues(newValues);
   };
