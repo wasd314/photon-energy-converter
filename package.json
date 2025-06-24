@@ -10,7 +10,8 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,json,css,md}\"",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-pwa-assets": "pwa-assets-generator"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -25,6 +26,7 @@
     "@eslint/js": "^9.28.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@vite-pwa/assets-generator": "^1.0.0",
     "@vitejs/plugin-react-swc": "^3.9.0",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
