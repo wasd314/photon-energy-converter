@@ -29,6 +29,24 @@ export const units: UnitProps[] = [
     mathUnit: '\\mathrm{eV}',
   },
   {
+    // N_A^-1 / ((J/kJ) mol)
+    // = (kJ/J) / (N_A mol)
+    coefficient: 1000 / 6.02214076e23,
+    proportional: true,
+    quantityName: 'Molar energy',
+    mathQuantity: 'E_\\text{m}',
+    mathUnit: '\\mathrm{kJ} / \\mathrm{mol}',
+  },
+  {
+    // N_A^-1 / ((J/kcal) mol)
+    // = (kcal/J) / (N_A mol)
+    coefficient: 4184 / 6.02214076e23,
+    proportional: true,
+    quantityName: '',
+    mathQuantity: '',
+    mathUnit: '\\mathrm{kcal} / \\mathrm{mol}',
+  },
+  {
     // h c / J m
     // eslint-disable-next-line no-loss-of-precision
     coefficient: 1.9864458571489287e-25,
