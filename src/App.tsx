@@ -6,7 +6,6 @@ import { units } from './Units';
 const App = () => {
   const [values, setValues] = useState(Array(units.length).fill(''));
   const updateEnergy = (i0: number, original: string, newEnergy: number) => {
-    console.log(`\tupdateEnergy(${newEnergy})`);
     const newValues = units.map(({ coefficient, proportional }, i) => {
       if (i == i0) return original;
       const newValue = proportional
@@ -19,7 +18,6 @@ const App = () => {
     setValues(newValues);
   };
   const updateValue = (i: number, newValue: string) => {
-    console.log(`updateValue(${i}, "${newValue}")`);
     const newValues = values.slice();
     newValues[i] = newValue;
     setValues(newValues);
@@ -31,6 +29,9 @@ const App = () => {
     if (newValue !== '' && !Number.isNaN(newEnergy)) {
       updateEnergy(i, newValue, newEnergy);
     }
+  };
+  const handleClick = () => {
+    setValues(Array(units.length).fill(''));
   };
   const energyUnits = units.map(
     ({ quantityName, mathQuantity, mathUnit }, i) => (
@@ -50,6 +51,9 @@ const App = () => {
       <table>
         <tbody>{energyUnits}</tbody>
       </table>
+      <div>
+        <button onClick={handleClick}>Clear</button>
+      </div>
     </>
   );
 };
