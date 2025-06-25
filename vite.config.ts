@@ -11,7 +11,13 @@ export default defineConfig({
       devOptions: { enabled: true },
       injectRegister: 'auto',
       workbox: {
+        globDirectory: 'dist',
         globPatterns: ['**/*.{css,html,ico,js,png,ttf,webmanifest,woff,woff2}'],
+        maximumFileSizeToCacheInBytes: 200 * 1024 * 1024,
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/_/, /\.[^/]*$/],
+        clientsClaim: true,
+        skipWaiting: true,
       },
       manifest: {
         name: 'Photon Energy Converter',
@@ -21,6 +27,7 @@ export default defineConfig({
         background_color: '#111111',
         orientation: 'any',
         start_url: '/',
+        scope: '/',
         icons: [
           {
             src: 'pwa-64x64.png',
