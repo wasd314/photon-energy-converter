@@ -12,14 +12,14 @@ Visit: https://photon-energy-converter.vercel.app/
   - $\mathrm{J}$
   - $\mathrm{eV}$
 - モルエネルギー (Molar energy) $E_\text{m}$
-  - $\mathrm{kJ} \, \mathrm{mol}^{-1}$
-  - $\mathrm{kcal} \, \mathrm{mol}^{-1}$
+  - $\mathrm{kJ} \\, \mathrm{mol}^{-1}$
+  - $\mathrm{kcal} \\, \mathrm{mol}^{-1}$
 - 波長 (Wavelength) $\lambda$
   - $\mathrm{m}$
   - $\mathrm{nm}$
 - 波数 (Wavenumber) $\tilde{\nu}$
   - $\mathrm{cm}^{-1}$
-  - **note**: 角波数 (Angular wavenumber) $k = 2 \pi \tilde{\nu} \, [\mathrm{rad} \, \mathrm{m}^{-1}]$ ではない
+  - **note**: 角波数 (Angular wavenumber) $k = 2 \pi \tilde{\nu} \\, [\mathrm{rad} \\, \mathrm{m}^{-1}]$ ではない
 - 周期 (Period) $\tau$
   - $\mathrm{s}$
   - $\mathrm{fs}$
@@ -27,8 +27,8 @@ Visit: https://photon-energy-converter.vercel.app/
   - $\mathrm{Hz}$
   - $\mathrm{THz}$
 - 角周波数 (Angular frequency) $\omega$
-  - $\mathrm{rad} \, \mathrm{s}^{-1}$
-  - $\mathrm{rad} \, \mathrm{fs}^{-1}$
+  - $\mathrm{rad} \\, \mathrm{s}^{-1}$
+  - $\mathrm{rad} \\, \mathrm{fs}^{-1}$
 - 温度 (Temperature) $T$
   - $\mathrm{K}$
 - 磁束密度 (Magnetic flux density) $B$
