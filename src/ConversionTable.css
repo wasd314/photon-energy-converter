@@ -1,0 +1,28 @@
+.conversion-table-container {
+  padding-bottom: 1.5rem;
+}
+
+.quantity-block {
+  border: #777 1px solid;
+  border-radius: 5px;
+  margin-block: 3px;
+  padding: 0.5rem 5px;
+}
+
+.quantity-header {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.unit-row {
+  display: grid;
+  grid-template-columns: 30px 22px 150px 90px;
+}
+
+.value-input {
+  width: calc(100% - 20px);
+}
+
+.clear-button-wrapper {
+  padding-block: 2em;
+}
