@@ -268,6 +268,7 @@ const ConversionTable = () => {
     setTexts(newTexts);
 
     const valueParsed = Number(newText);
+    // Number('') === +0: number
     if (newText === '' || Number.isNaN(valueParsed)) return;
     const { proportional, coefficient } = units[indexUpdated];
     const newEnergy = proportional
@@ -303,7 +304,6 @@ const ConversionTable = () => {
         rows.push(
           <div key="conversionFormula">
             <BlockMath math={mathConversionFormula} />
-            {/* <InlineMath math={mathConversionFormula.replace(/frac/g, "dfrac")} /> */}
           </div>
         );
       }
