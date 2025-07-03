@@ -203,20 +203,20 @@ interface UnitRowProps {
   mathQuantity: string;
   mathUnit: string;
   text: string;
-  setText: (newText: string, index: number) => void;
+  recordCellUpdate: (newText: string, index: number) => void;
 }
 const UnitRow = ({
   index,
   mathQuantity,
   mathUnit,
   text,
-  setText,
+  recordCellUpdate,
 }: UnitRowProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value, index);
+    recordCellUpdate(e.target.value, index);
   };
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    setText(e.target.value, index);
+    recordCellUpdate(e.target.value, index);
   };
   return (
     <div className="unit-row">
@@ -247,7 +247,7 @@ const ConversionTable = () => {
   const [showQuantityName, setShowQuantityName] = useState(true);
   const [showFormulae, setShowFormulae] = useState(false);
   // 更新後の文字列が newEnergy: number と解釈できたときにそれを他のセルに反映する
-  const updateWithEnergy = (
+  const updateCellsWithEnergy = (
     newEnergy: number,
     textUpdated: string,
     indexUpdated: number
@@ -262,18 +262,19 @@ const ConversionTable = () => {
     setTexts(newTexts);
   };
   // 1セルへの更新を記録する（入力途中でも）
-  const setText = (newText: string, indexUpdated: number) => {
+  const recordCellUpdate = (newText: string, indexUpdated: number) => {
     const newTexts = texts.slice();
     newTexts[indexUpdated] = newText;
     setTexts(newTexts);
 
     const valueParsed = Number(newText);
+    // Number('') === +0: number
     if (newText === '' || Number.isNaN(valueParsed)) return;
     const { proportional, coefficient } = units[indexUpdated];
     const newEnergy = proportional
       ? valueParsed * coefficient
       : coefficient / valueParsed;
-    updateWithEnergy(newEnergy, newText, indexUpdated);
+    updateCellsWithEnergy(newEnergy, newText, indexUpdated);
   };
 
   const handleChangeShowQuantityName = (
@@ -303,7 +304,6 @@ const ConversionTable = () => {
         rows.push(
           <div key="conversionFormula">
             <BlockMath math={mathConversionFormula} />
-            {/* <InlineMath math={mathConversionFormula.replace(/frac/g, "dfrac")} /> */}
           </div>
         );
       }
@@ -317,7 +317,7 @@ const ConversionTable = () => {
               mathQuantity={i === 0 ? mathQuantity : ''}
               mathUnit={unit.mathUnit}
               text={texts[index]}
-              setText={setText}
+              recordCellUpdate={recordCellUpdate}
             />
           );
         })
