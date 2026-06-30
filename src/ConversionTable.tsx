@@ -1,8 +1,8 @@
 import 'katex/dist/katex.min.css';
 import './ConversionTable.css';
-import { useState, type JSX } from 'react';
-import { BlockMath, InlineMath } from 'react-katex';
 import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
+import { type JSX, useState } from 'react';
+import { BlockMath, InlineMath } from 'react-katex';
 
 interface UnitProps {
   /** 1 {この単位} が x J に相当するときの x */
@@ -74,7 +74,6 @@ const quantities: QuantityProps[] = [
     units: [
       {
         // h c / J m
-        // eslint-disable-next-line no-loss-of-precision
         coefficient: 1.9864458571489287e-25,
         mathUnit: '\\mathrm{m}',
       },
@@ -94,7 +93,6 @@ const quantities: QuantityProps[] = [
     units: [
       {
         // h c / J cm
-        // eslint-disable-next-line no-loss-of-precision
         coefficient: 1.9864458571489287e-23,
         mathUnit: '\\mathrm{cm}^{-1}',
       },
