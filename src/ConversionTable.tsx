@@ -74,6 +74,7 @@ const quantities: QuantityProps[] = [
     units: [
       {
         // h c / J m
+        // biome-ignore lint/correctness/noPrecisionLoss: defined constant
         coefficient: 1.9864458571489287e-25,
         mathUnit: '\\mathrm{m}',
       },
@@ -93,6 +94,7 @@ const quantities: QuantityProps[] = [
     units: [
       {
         // h c / J cm
+        // biome-ignore lint/correctness/noPrecisionLoss: defined constant
         coefficient: 1.9864458571489287e-23,
         mathUnit: '\\mathrm{cm}^{-1}',
       },
