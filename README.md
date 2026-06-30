@@ -49,5 +49,4 @@ Visit: https://photon-energy-converter.vercel.app/
   - `vite-plugin-pwa`
   - `@vite-pwa/assets-generator`
 - MUI
-- ESLint
-- Prettier
+- Biome
