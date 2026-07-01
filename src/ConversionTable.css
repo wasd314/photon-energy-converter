@@ -16,7 +16,7 @@
 
 .unit-row {
   display: grid;
-  grid-template-columns: 30px 22px 150px 90px;
+  grid-template-columns: 30px 22px auto 90px;
 }
 
 .unit-row > div:nth-child(3) {
