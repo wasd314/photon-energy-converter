@@ -16,6 +16,7 @@
     "@fontsource/roboto": "^5.2.10",
     "@mui/icons-material": "^9.1.1",
     "@mui/material": "^9.1.2",
+    "@mui/x-tree-view": "^9.7.0",
     "@types/react-katex": "^3.0.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
