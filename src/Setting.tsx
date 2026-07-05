@@ -1,9 +1,10 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { DialogContentText } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
@@ -74,7 +75,8 @@ export const SettingsOverlay = ({
   };
 
   const isItemSelectionDisabled = (item: UnitSelectionItem) =>
-    item.category === 'multipleOfUnits';
+    // item.category === 'multipleOfUnits';
+    item.category !== 'unit';
   const handleSelectedItemsChange = (
     _event: React.SyntheticEvent | null,
     ids: string[]
@@ -98,37 +100,46 @@ export const SettingsOverlay = ({
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <Stack spacing={2}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showQuantityName}
-                onChange={handleChangeShowQuantityName}
+        <Stack spacing={2} divider={<Divider flexItem />}>
+          <Stack spacing={2}>
+            <Typography variant="h6" component="h3">
+              Display
+            </Typography>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showQuantityName}
+                    onChange={handleChangeShowQuantityName}
+                  />
+                }
+                label="Show quantity names"
               />
-            }
-            label="Show quantity names"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showFormulae}
-                onChange={handleChangeShowFormulae}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={showFormulae}
+                    onChange={handleChangeShowFormulae}
+                  />
+                }
+                label="Show conversion formulae"
               />
-            }
-            label="Show conversion formulae"
-          />
-          <DialogContentText>
-            Displaying units: {selectedItems.join(', ')}
-          </DialogContentText>
-          <RichTreeView
-            items={selectionItems}
-            multiSelect
-            checkboxSelection
-            onSelectedItemsChange={handleSelectedItemsChange}
-            isItemSelectionDisabled={isItemSelectionDisabled}
-            itemChildrenIndentation={24}
-            selectedItems={selectedItems}
-          />
+            </FormGroup>
+          </Stack>
+          <Stack spacing={2}>
+            <Typography variant="h6" component="h3">
+              Quantities, Units Displaying units: [{selectedItems.join(', ')}]
+            </Typography>
+            <RichTreeView
+              items={selectionItems}
+              multiSelect
+              checkboxSelection
+              onSelectedItemsChange={handleSelectedItemsChange}
+              isItemSelectionDisabled={isItemSelectionDisabled}
+              itemChildrenIndentation={24}
+              selectedItems={selectedItems}
+            />
+          </Stack>
         </Stack>
       </DialogContent>
     </Dialog>
