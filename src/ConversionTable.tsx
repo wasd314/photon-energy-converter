@@ -83,6 +83,12 @@ const quantities: QuantityProps[] = [
         coefficient: 1.9864458571489287e-16,
         mathUnit: '\\mathrm{nm}',
       },
+      {
+        // h c / J nm
+        // biome-ignore lint/correctness/noPrecisionLoss: defined constant
+        coefficient: 1.9864458571489287e-15,
+        mathUnit: '\\text{\\AA}',
+      },
     ],
   },
   {
