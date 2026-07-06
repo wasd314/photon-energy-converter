@@ -26,7 +26,7 @@ export const SettingsOverlay = ({
   open: boolean;
   onClose: () => void;
 }) => {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showQuantityName, setShowQuantityName] = useState(true);
   const [showFormulae, setShowFormulae] = useState(false);
 
@@ -48,7 +48,7 @@ export const SettingsOverlay = ({
     _event: React.SyntheticEvent | null,
     ids: string[]
   ) => {
-    setSelectedItems(ids.sort());
+    setSelectedIds(ids.sort());
   };
   return (
     <Dialog
@@ -99,7 +99,7 @@ export const SettingsOverlay = ({
             </Typography>
             <Typography>
               Selected:
-              <InlineMath math={`[${selectedItems.join(', ')}]`} />
+              <InlineMath math={`[${selectedIds.join(', ')}]`} />
             </Typography>
             <RichTreeView
               items={selectionItems}
@@ -108,7 +108,7 @@ export const SettingsOverlay = ({
               onSelectedItemsChange={handleSelectedItemsChange}
               isItemSelectionDisabled={isItemSelectionDisabled}
               itemChildrenIndentation={24}
-              selectedItems={selectedItems}
+              selectedItems={selectedIds}
               slots={{ item: KatexTreeItem }}
             />
           </Stack>
