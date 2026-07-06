@@ -1,5 +1,5 @@
 import Typography from '@mui/material/Typography';
-import * as React from 'react';
+import { type ReactNode } from 'react';
 import { InlineMath } from 'react-katex';
 
 import {
@@ -25,7 +25,7 @@ export interface Unit {
 
 export interface MultipleOfUnits {
   seriesLabel: string;
-  seriesLabelNode?: React.ReactNode;
+  seriesLabelNode?: ReactNode;
   series: Unit[];
 }
 

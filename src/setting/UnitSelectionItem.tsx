@@ -1,3 +1,7 @@
+import Typography from '@mui/material/Typography';
+import { type ReactNode } from 'react';
+import { InlineMath } from 'react-katex';
+
 import {
   isUnit,
   type MultipleOfUnits,
@@ -9,7 +13,7 @@ export interface UnitSelectionItem {
   category: 'quantity' | 'unit' | 'multipleOfUnits';
   id: string;
   label: string;
-  labelNode?: React.ReactNode;
+  labelNode: ReactNode;
   children?: UnitSelectionItem[];
 }
 
@@ -18,6 +22,7 @@ export const selectionItems: UnitSelectionItem[] = ((quantities) => {
     category: 'unit',
     id: unit.mathUnit,
     label: unit.mathUnit,
+    labelNode: <InlineMath math={unit.mathUnit} />,
   });
   const fromMultipleOfUnits: (units: MultipleOfUnits) => UnitSelectionItem = (
     units: MultipleOfUnits
@@ -25,7 +30,9 @@ export const selectionItems: UnitSelectionItem[] = ((quantities) => {
     category: 'multipleOfUnits',
     id: units.seriesLabel,
     label: units.seriesLabel,
-    labelNode: units.seriesLabelNode,
+    labelNode: units.seriesLabelNode || (
+      <Typography>{units.seriesLabel}</Typography>
+    ),
     children: units.series.map(fromUnit),
   });
   return quantities.map((quantity) => {
@@ -33,6 +40,7 @@ export const selectionItems: UnitSelectionItem[] = ((quantities) => {
       category: 'quantity',
       id: quantity.quantityName,
       label: quantity.quantityName,
+      labelNode: <Typography>{quantity.quantityName}</Typography>,
       children: quantity.units.map((value) => {
         return isUnit(value) ? fromUnit(value) : fromMultipleOfUnits(value);
       }),
