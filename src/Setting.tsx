@@ -13,44 +13,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { useState } from 'react';
 import {
-  isUnit,
-  type MultipleOfUnits,
-  quantities,
-  type Unit,
-} from './units/Unit';
-
-interface UnitSelectionItem {
-  category: 'quantity' | 'unit' | 'multipleOfUnits';
-  id: string;
-  label: string;
-  children?: UnitSelectionItem[];
-}
-
-const selectionItems: UnitSelectionItem[] = ((quantities) => {
-  const fromUnit: (unit: Unit) => UnitSelectionItem = (unit: Unit) => ({
-    category: 'unit',
-    id: unit.unitLabel,
-    label: unit.unitLabel,
-  });
-  const fromMultipleOfUnits: (units: MultipleOfUnits) => UnitSelectionItem = (
-    units: MultipleOfUnits
-  ) => ({
-    category: 'multipleOfUnits',
-    id: units.seriesLabel,
-    label: units.seriesLabel,
-    children: units.series.map(fromUnit),
-  });
-  return quantities.map((quantity) => {
-    return {
-      category: 'quantity',
-      id: quantity.quantityName,
-      label: quantity.quantityName,
-      children: quantity.units.map((value) => {
-        return isUnit(value) ? fromUnit(value) : fromMultipleOfUnits(value);
-      }),
-    };
-  });
-})(quantities);
+  selectionItems,
+  type UnitSelectionItem,
+} from './setting/UnitSelectionItem';
 
 export const SettingsOverlay = ({
   open,
