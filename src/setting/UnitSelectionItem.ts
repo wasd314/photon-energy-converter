@@ -15,8 +15,8 @@ export interface UnitSelectionItem {
 export const selectionItems: UnitSelectionItem[] = ((quantities) => {
   const fromUnit: (unit: Unit) => UnitSelectionItem = (unit: Unit) => ({
     category: 'unit',
-    id: unit.unitLabel,
-    label: unit.unitLabel,
+    id: unit.mathUnit,
+    label: unit.mathUnit,
   });
   const fromMultipleOfUnits: (units: MultipleOfUnits) => UnitSelectionItem = (
     units: MultipleOfUnits

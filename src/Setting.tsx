@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { useState } from 'react';
+import { InlineMath } from 'react-katex';
+import { KatexTreeItem } from './setting/UnitSelect';
 import {
   selectionItems,
   type UnitSelectionItem,
@@ -93,7 +95,11 @@ export const SettingsOverlay = ({
           </Stack>
           <Stack spacing={2}>
             <Typography variant="h6" component="h3">
-              Quantities, Units Displaying units: [{selectedItems.join(', ')}]
+              Quantities, Units Displaying units
+            </Typography>
+            <Typography>
+              Selected:
+              <InlineMath math={`[${selectedItems.join(', ')}]`} />
             </Typography>
             <RichTreeView
               items={selectionItems}
@@ -103,6 +109,7 @@ export const SettingsOverlay = ({
               isItemSelectionDisabled={isItemSelectionDisabled}
               itemChildrenIndentation={24}
               selectedItems={selectedItems}
+              slots={{ item: KatexTreeItem }}
             />
           </Stack>
         </Stack>
