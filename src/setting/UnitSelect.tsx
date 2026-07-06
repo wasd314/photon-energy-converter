@@ -11,18 +11,18 @@ import { type UnitSelectionItem } from './UnitSelectionItem';
 interface KatexTreeLabelProps {
   children: string;
   className: string;
-  useKatex: boolean;
+  category: 'quantity' | 'unit' | 'multipleOfUnits';
+  labelNode?: React.ReactNode;
 }
 
 const KatexTreeLabel = (props: KatexTreeLabelProps) => {
-  const { children, className, useKatex } = props;
+  const { children, className, category, labelNode } = props;
   return (
     <div className={className}>
-      {useKatex ? (
-        <InlineMath math={children} />
-      ) : (
-        <Typography>{children}</Typography>
-      )}
+      {category === 'unit' && <InlineMath math={children} />}
+      {category === 'quantity' && <Typography>{children}</Typography>}
+      {category === 'multipleOfUnits' &&
+        (labelNode || <Typography>{children}</Typography>)}
     </div>
   );
 };
@@ -41,7 +41,8 @@ export const KatexTreeItem = ({
       }}
       slotProps={{
         label: {
-          useKatex: item.category === 'unit',
+          category: item.category,
+          labelNode: item.labelNode,
         } as KatexTreeLabelProps,
       }}
     />

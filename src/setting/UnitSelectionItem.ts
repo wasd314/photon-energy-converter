@@ -9,6 +9,7 @@ export interface UnitSelectionItem {
   category: 'quantity' | 'unit' | 'multipleOfUnits';
   id: string;
   label: string;
+  labelNode?: React.ReactNode;
   children?: UnitSelectionItem[];
 }
 
@@ -24,6 +25,7 @@ export const selectionItems: UnitSelectionItem[] = ((quantities) => {
     category: 'multipleOfUnits',
     id: units.seriesLabel,
     label: units.seriesLabel,
+    labelNode: units.seriesLabelNode,
     children: units.series.map(fromUnit),
   });
   return quantities.map((quantity) => {

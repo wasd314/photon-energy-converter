@@ -1,3 +1,7 @@
+import Typography from '@mui/material/Typography';
+import * as React from 'react';
+import { InlineMath } from 'react-katex';
+
 import {
   AVOGADRO_CONSTANT,
   BOHR_MAGNETON,
@@ -21,6 +25,7 @@ export interface Unit {
 
 export interface MultipleOfUnits {
   seriesLabel: string;
+  seriesLabelNode?: React.ReactNode;
   series: Unit[];
 }
 
@@ -47,6 +52,14 @@ const inverseProportionalHelper = (coefficient: number) => ({
   toJoule: (x: number) => coefficient / x,
   fromJoule: (x: number) => coefficient / x,
 });
+const multipleLabelHelper = (mathBaseUnit: string) => ({
+  seriesLabel: `Multiples of ${mathBaseUnit}`,
+  seriesLabelNode: (
+    <Typography>
+      Multiples of <InlineMath math={mathBaseUnit} />{' '}
+    </Typography>
+  ),
+});
 
 export const quantities: Quantity[] = [
   {
@@ -56,7 +69,7 @@ export const quantities: Quantity[] = [
       '\\frac{E}{\\mathrm{J}} = \\frac{E}{\\mathrm{eV}} \\cdot \\frac{e}{\\mathrm{C}}',
     units: [
       {
-        seriesLabel: 'Multiples of J',
+        ...multipleLabelHelper('\\mathrm{J}'),
         series: [
           {
             unitLabel: 'J',
@@ -110,7 +123,7 @@ export const quantities: Quantity[] = [
       '\\frac{E}{\\mathrm{J}} = \\frac{\\lambda^{-1}}{\\mathrm{m}^{-1}} \\cdot \\frac{h c}{\\mathrm{J} \\, \\mathrm{m}}',
     units: [
       {
-        seriesLabel: 'Multiples of m',
+        ...multipleLabelHelper('\\mathrm{m}'),
         series: [
           {
             unitLabel: 'm',
@@ -143,10 +156,21 @@ export const quantities: Quantity[] = [
       '\\frac{E}{\\mathrm{J}} = \\frac{\\tilde{\\nu}}{\\mathrm{cm}^{-1}} \\cdot \\frac{h c}{\\mathrm{J} \\, \\mathrm{cm}}',
     units: [
       {
-        unitLabel: 'cm⁻¹',
-        mathUnit: '\\mathrm{cm}^{-1}',
-        // h c / J cm
-        ...proportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT * 1e2),
+        ...multipleLabelHelper('\\mathrm{m}^{-1}'),
+        series: [
+          {
+            unitLabel: 'm⁻¹',
+            mathUnit: '\\mathrm{m}^{-1}',
+            // h c / J m
+            ...proportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT),
+          },
+          {
+            unitLabel: 'cm⁻¹',
+            mathUnit: '\\mathrm{cm}^{-1}',
+            // h c / J cm
+            ...proportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT * 1e2),
+          },
+        ],
       },
     ],
   },
