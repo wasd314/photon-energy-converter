@@ -32,7 +32,7 @@ export interface MultipleOfUnits {
 export const isUnit = (x: Unit | MultipleOfUnits): x is Unit =>
   'unitLabel' in x;
 
-interface Quantity {
+export interface Quantity {
   /** 物理量の名前 */
   quantityName: string;
   /** KaTeX 表示の量記号 */
