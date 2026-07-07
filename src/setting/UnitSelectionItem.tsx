@@ -15,24 +15,34 @@ export interface UnitSelectionItem {
   id: string;
   label: string;
   labelNode: ReactNode;
+  parentLabel: string;
   children?: UnitSelectionItem[];
 }
-const fromUnit: (unit: Unit) => UnitSelectionItem = (unit: Unit) => ({
+
+export const QUANTITY_PARENT_LABEL = '__root__';
+
+const fromUnit: (unit: Unit, parentLabel: string) => UnitSelectionItem = (
+  unit: Unit,
+  parentLabel: string
+) => ({
   category: 'unit',
   id: unit.mathUnit,
   label: unit.mathUnit,
   labelNode: <InlineMath math={unit.mathUnit} />,
+  parentLabel,
 });
-const fromMultipleOfUnits: (units: MultipleOfUnits) => UnitSelectionItem = (
-  units: MultipleOfUnits
-) => ({
+const fromMultipleOfUnits: (
+  units: MultipleOfUnits,
+  parentLabel: string
+) => UnitSelectionItem = (units: MultipleOfUnits, parentLabel: string) => ({
   category: 'multipleOfUnits',
   id: units.seriesLabel,
   label: units.seriesLabel,
   labelNode: units.seriesLabelNode || (
     <Typography>{units.seriesLabel}</Typography>
   ),
-  children: units.series.map(fromUnit),
+  parentLabel,
+  children: units.series.map((unit) => fromUnit(unit, parentLabel)),
 });
 const fromQuantity: (quantity: Quantity) => UnitSelectionItem = (
   quantity: Quantity
@@ -42,8 +52,11 @@ const fromQuantity: (quantity: Quantity) => UnitSelectionItem = (
     id: quantity.quantityName,
     label: quantity.quantityName,
     labelNode: <Typography>{quantity.quantityName}</Typography>,
+    parentLabel: QUANTITY_PARENT_LABEL,
     children: quantity.units.map((value) => {
-      return isUnit(value) ? fromUnit(value) : fromMultipleOfUnits(value);
+      return isUnit(value)
+        ? fromUnit(value, quantity.quantityName)
+        : fromMultipleOfUnits(value, quantity.quantityName);
     }),
   };
 };
