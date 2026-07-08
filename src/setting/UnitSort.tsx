@@ -193,7 +193,6 @@ export const UnitSorterTree = ({
       >
         <RichTreeView
           items={items}
-          defaultExpandedItems={['grid']}
           slots={{ item: UnitSorterTreeItem }}
           disableSelection
         />

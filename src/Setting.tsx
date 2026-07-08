@@ -12,12 +12,14 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { useState } from 'react';
-import { InlineMath } from 'react-katex';
+import { type FullOrder } from './setting/StoreState';
 import { KatexTreeItem } from './setting/UnitSelect';
 import {
   selectionItems,
+  selectionItemsFlattened,
   type UnitSelectionItem,
 } from './setting/UnitSelectionItem';
+import { UnitSorterTree } from './setting/UnitSort';
 
 export const SettingsOverlay = ({
   open,
@@ -29,6 +31,16 @@ export const SettingsOverlay = ({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showQuantityName, setShowQuantityName] = useState(true);
   const [showFormulae, setShowFormulae] = useState(false);
+
+  const fullOrderInitial: FullOrder = selectionItemsFlattened.map(
+    (quantity) => {
+      return [
+        quantity.label,
+        quantity?.children?.map((unit) => unit.label) || [],
+      ];
+    }
+  );
+  const [fullOrder, setFullOrder] = useState(fullOrderInitial);
 
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
@@ -59,7 +71,7 @@ export const SettingsOverlay = ({
       fullWidth
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
-        <Typography variant="h6" component="span" sx={{ flexGrow: 1 }}>
+        <Typography variant="h5" component="span" sx={{ flexGrow: 1 }}>
           Settings
         </Typography>
         <IconButton onClick={onClose} size="small">
@@ -69,7 +81,7 @@ export const SettingsOverlay = ({
       <DialogContent dividers>
         <Stack spacing={2} divider={<Divider flexItem />}>
           <Stack spacing={2}>
-            <Typography variant="h6" component="h3">
+            <Typography variant="h5" component="h3">
               Display
             </Typography>
             <FormGroup>
@@ -94,23 +106,35 @@ export const SettingsOverlay = ({
             </FormGroup>
           </Stack>
           <Stack spacing={2}>
-            <Typography variant="h6" component="h3">
-              Quantities, Units Displaying units
+            <Typography variant="h5" component="h3">
+              Quantities, Units
             </Typography>
-            <Typography>
-              Selected:
-              <InlineMath math={`[${selectedIds.join(', ')}]`} />
-            </Typography>
-            <RichTreeView
-              items={selectionItems}
-              multiSelect
-              checkboxSelection
-              onSelectedItemsChange={handleSelectedItemsChange}
-              isItemSelectionDisabled={isItemSelectionDisabled}
-              itemChildrenIndentation={24}
-              selectedItems={selectedIds}
-              slots={{ item: KatexTreeItem }}
-            />
+            <Stack>
+              <Typography variant="h6">Unit Select</Typography>
+              <RichTreeView
+                items={selectionItems}
+                multiSelect
+                checkboxSelection
+                onSelectedItemsChange={handleSelectedItemsChange}
+                isItemSelectionDisabled={isItemSelectionDisabled}
+                itemChildrenIndentation={24}
+                defaultExpandedItems={selectionItemsFlattened.map((q) => q.id)}
+                selectedItems={selectedIds}
+                slots={{ item: KatexTreeItem }}
+              />
+            </Stack>
+            <Stack>
+              <Typography variant="h6">Order</Typography>
+              {selectedIds.length > 0 ? (
+                <UnitSorterTree
+                  fullOrder={fullOrder}
+                  setFullOrder={setFullOrder}
+                  selectedIds={selectedIds}
+                />
+              ) : (
+                <Typography color="textDisabled">Unit Not selected</Typography>
+              )}
+            </Stack>
           </Stack>
         </Stack>
       </DialogContent>
