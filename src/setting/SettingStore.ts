@@ -6,7 +6,7 @@ import { type FullOrder, fullOrderInitial } from './StoreState';
 const resolveSetStateAction = <T>(action: SetStateAction<T>, value: T) => {
   return typeof action === 'function'
     ? (action as (prev: T) => T)(value)
-    : value;
+    : action;
 };
 
 type SettingStoreState = {
