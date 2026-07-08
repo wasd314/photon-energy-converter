@@ -1,8 +1,9 @@
 import 'katex/dist/katex.min.css';
 import './ConversionTable.css';
-import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
+import { Button } from '@mui/material';
 import { type JSX, useState } from 'react';
 import { BlockMath, InlineMath } from 'react-katex';
+import { useSettingStore } from './setting/SettingStore';
 
 interface UnitProps {
   /** 1 {この単位} が x J に相当するときの x */
@@ -250,8 +251,9 @@ const UnitRow = ({
 
 const ConversionTable = () => {
   const [texts, setTexts] = useState(Array(units.length).fill(''));
-  const [showQuantityName, setShowQuantityName] = useState(true);
-  const [showFormulae, setShowFormulae] = useState(false);
+  const showQuantityName = useSettingStore((state) => state.showQuantityName);
+  const showFormulae = useSettingStore((state) => state.showFormulae);
+
   // 更新後の文字列が newEnergy: number と解釈できたときにそれを他のセルに反映する
   const updateCellsWithEnergy = (
     newEnergy: number,
@@ -283,14 +285,6 @@ const ConversionTable = () => {
     updateCellsWithEnergy(newEnergy, newText, indexUpdated);
   };
 
-  const handleChangeShowQuantityName = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setShowQuantityName(e.target.checked);
-  };
-  const handleChangeShowFormulae = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowFormulae(e.target.checked);
-  };
   const handleClickClear = () => {
     setTexts(Array(units.length).fill(''));
   };
@@ -340,26 +334,6 @@ const ConversionTable = () => {
     <>
       <div className="conversion-table-container">{quantityBlocks}</div>
       <div className="operation-menu">
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showQuantityName}
-                onChange={handleChangeShowQuantityName}
-              />
-            }
-            label="Show quantity names"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showFormulae}
-                onChange={handleChangeShowFormulae}
-              />
-            }
-            label="Show conversion formulae"
-          />
-        </FormGroup>
         <div className="clear-button-wrapper">
           <Button variant="outlined" color="error" onClick={handleClickClear}>
             Clear values
