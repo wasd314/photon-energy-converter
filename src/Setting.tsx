@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { useState } from 'react';
-import { type FullOrder } from './setting/StoreState';
+import { fullOrderInitial } from './setting/StoreState';
 import { KatexTreeItem } from './setting/UnitSelect';
 import {
   selectionItems,
@@ -32,14 +32,6 @@ export const SettingsOverlay = ({
   const [showQuantityName, setShowQuantityName] = useState(true);
   const [showFormulae, setShowFormulae] = useState(false);
 
-  const fullOrderInitial: FullOrder = selectionItemsFlattened.map(
-    (quantity) => {
-      return [
-        quantity.label,
-        quantity?.children?.map((unit) => unit.label) || [],
-      ];
-    }
-  );
   const [fullOrder, setFullOrder] = useState(fullOrderInitial);
 
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));

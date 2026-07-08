@@ -1,5 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react';
-import { QUANTITY_PARENT_LABEL } from './UnitSelectionItem';
+import {
+  QUANTITY_PARENT_LABEL,
+  selectionItemsFlattened,
+} from './UnitSelectionItem';
 
 export type FullOrder = [string, string[]][];
 export type SetFullOrder = Dispatch<SetStateAction<FullOrder>>;
@@ -23,3 +26,12 @@ export const toFullOrder: (map: FullOrderMap) => FullOrder = (
     .get(QUANTITY_PARENT_LABEL)!
     .map((quantity) => [quantity, [...map.get(quantity)!]]);
 };
+
+export const fullOrderInitial: FullOrder = selectionItemsFlattened.map(
+  (quantity) => {
+    return [
+      quantity.label,
+      quantity?.children?.map((unit) => unit.label) || [],
+    ];
+  }
+);
