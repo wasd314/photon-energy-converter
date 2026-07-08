@@ -1,20 +1,21 @@
 import {
   TreeItem,
+  TreeItemLabel,
   type TreeItemProps,
   useTreeItemModel,
 } from '@mui/x-tree-view';
 import { type ReactNode, type Ref } from 'react';
 import { type UnitSelectionItem } from './UnitSelectionItem';
 
-interface KatexTreeLabelProps {
+export interface KatexTreeLabelProps {
   children: string;
   className: string;
   labelNode: ReactNode;
 }
 
-const KatexTreeLabel = (props: KatexTreeLabelProps) => {
+export const KatexTreeLabel = (props: KatexTreeLabelProps) => {
   const { className, labelNode } = props;
-  return <div className={className}>{labelNode}</div>;
+  return <TreeItemLabel className={className}>{labelNode}</TreeItemLabel>;
 };
 
 export const KatexTreeItem = ({
