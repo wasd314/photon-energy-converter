@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import ConversionTable from './ConversionTable';
-import { SettingsOverlay } from './Setting';
+import { SettingsOverlay } from './setting/Setting';
 
 const theme = createTheme({
   cssVariables: true,

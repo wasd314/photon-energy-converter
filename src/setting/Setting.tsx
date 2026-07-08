@@ -11,14 +11,14 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
-import { useSettingStore } from './setting/SettingStore';
-import { KatexTreeItem } from './setting/UnitSelect';
+import { useSettingStore } from './SettingStore';
+import { KatexTreeItem } from './UnitSelect';
 import {
   selectionItems,
   selectionItemsFlattened,
   type UnitSelectionItem,
-} from './setting/UnitSelectionItem';
-import { UnitSorterTree } from './setting/UnitSort';
+} from './UnitSelectionItem';
+import { UnitSorterTree } from './UnitSort';
 
 export const SettingsOverlay = ({
   open,
