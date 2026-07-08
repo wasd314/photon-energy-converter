@@ -1,6 +1,13 @@
+import type { Dispatch, SetStateAction } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { type FullOrder, fullOrderInitial } from './StoreState';
+
+const resolveSetStateAction = <T>(action: SetStateAction<T>, value: T) => {
+  return typeof action === 'function'
+    ? (action as (prev: T) => T)(value)
+    : value;
+};
 
 type SettingStoreState = {
   showQuantityName: boolean;
@@ -9,10 +16,10 @@ type SettingStoreState = {
   selectedUnitIds: string[];
 };
 type SettingStoreActions = {
-  setShowQuantityName: (nextShowQuantityName: boolean) => void;
-  setShowFormulae: (nextShowFormulae: boolean) => void;
-  setFullOrder: (nextFullOrder: FullOrder) => void;
-  setSelectedUnitIds: (nextSelectedUnitIds: string[]) => void;
+  setShowQuantityName: Dispatch<SetStateAction<boolean>>;
+  setShowFormulae: Dispatch<SetStateAction<boolean>>;
+  setFullOrder: Dispatch<SetStateAction<FullOrder>>;
+  setSelectedUnitIds: Dispatch<SetStateAction<string[]>>;
 };
 type SettingStore = SettingStoreState & SettingStoreActions;
 
@@ -23,12 +30,25 @@ export const useSettingStore = create<SettingStore>()(
       showFormulae: false,
       fullOrder: fullOrderInitial,
       selectedUnitIds: [],
-      setShowQuantityName: (showQuantityName: boolean) =>
-        set({ showQuantityName }),
-      setShowFormulae: (showFormulae: boolean) => set({ showFormulae }),
-      setFullOrder: (fullOrder: FullOrder) => set({ fullOrder }),
-      setSelectedUnitIds: (selectedUnitIds: string[]) =>
-        set({ selectedUnitIds }),
+      setShowQuantityName: (action) =>
+        set((state) => ({
+          showQuantityName: resolveSetStateAction(
+            action,
+            state.showQuantityName
+          ),
+        })),
+      setShowFormulae: (action) =>
+        set((state) => ({
+          showFormulae: resolveSetStateAction(action, state.showFormulae),
+        })),
+      setFullOrder: (action) =>
+        set((state) => ({
+          fullOrder: resolveSetStateAction(action, state.fullOrder),
+        })),
+      setSelectedUnitIds: (action) =>
+        set((state) => ({
+          selectedUnitIds: resolveSetStateAction(action, state.selectedUnitIds),
+        })),
     }),
     {
       name: 'photon-energy-converter',
