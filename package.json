@@ -21,7 +21,8 @@
     "@types/react-katex": "^3.0.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-katex": "^3.1.0"
+    "react-katex": "^3.1.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
