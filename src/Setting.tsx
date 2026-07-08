@@ -11,8 +11,7 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
-import { useState } from 'react';
-import { fullOrderInitial } from './setting/StoreState';
+import { useSettingStore } from './setting/SettingStore';
 import { KatexTreeItem } from './setting/UnitSelect';
 import {
   selectionItems,
@@ -28,11 +27,16 @@ export const SettingsOverlay = ({
   open: boolean;
   onClose: () => void;
 }) => {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [showQuantityName, setShowQuantityName] = useState(true);
-  const [showFormulae, setShowFormulae] = useState(false);
-
-  const [fullOrder, setFullOrder] = useState(fullOrderInitial);
+  const {
+    showQuantityName,
+    setShowQuantityName,
+    showFormulae,
+    setShowFormulae,
+    fullOrder,
+    setFullOrder,
+    selectedUnitIds: selectedIds,
+    setSelectedUnitIds: setSelectedIds,
+  } = useSettingStore();
 
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
