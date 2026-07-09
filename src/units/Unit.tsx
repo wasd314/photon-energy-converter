@@ -41,15 +41,6 @@ export interface Quantity {
   mathConversionFormula: string;
   units: (Unit | MultipleOfUnits)[];
 }
-export interface QuantityFlattened {
-  /** 物理量の名前 */
-  quantityName: string;
-  /** KaTeX 表示の量記号 */
-  mathQuantity: string;
-  /** KaTeX 表示のエネルギーとの変換公式 */
-  mathConversionFormula: string;
-  units: Unit[];
-}
 
 /** (E / J) = (x / Unit) * coefficient */
 const proportionalHelper = (coefficient: number) => ({
@@ -273,15 +264,3 @@ export const quantities: Quantity[] = [
     ],
   },
 ];
-
-export const quantitiesFlattened: QuantityFlattened[] = quantities.map(
-  (quantity) => {
-    const unitsFlattened = quantity.units.flatMap((value) =>
-      isUnit(value) ? [value] : value.series
-    );
-    return {
-      ...quantity,
-      units: unitsFlattened,
-    };
-  }
-);
