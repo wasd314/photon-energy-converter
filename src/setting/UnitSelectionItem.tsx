@@ -7,6 +7,7 @@ import {
   type MultipleOfUnits,
   type Quantity,
   quantities,
+  quantitiesFlattened,
   type Unit,
 } from '../units/Unit';
 
@@ -63,11 +64,4 @@ const fromQuantity: (quantity: Quantity) => UnitSelectionItem = (
 
 export const selectionItems: UnitSelectionItem[] = quantities.map(fromQuantity);
 
-export const selectionItemsFlattened = quantities.map((quantity) => {
-  return fromQuantity({
-    ...quantity,
-    units: quantity.units.flatMap((value) =>
-      isUnit(value) ? value : value.series
-    ),
-  });
-});
+export const selectionItemsFlattened = quantitiesFlattened.map(fromQuantity);
