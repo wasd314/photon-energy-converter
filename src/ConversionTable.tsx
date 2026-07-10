@@ -5,7 +5,11 @@ import { enableMapSet } from 'immer';
 import { type JSX, useMemo } from 'react';
 import { BlockMath, InlineMath } from 'react-katex';
 import { useImmer } from 'use-immer';
-import { useSettingStore, type TripleKeys } from './setting/SettingStore';
+import {
+  type TripleKeys,
+  tripleKeyMathLabel,
+  useSettingStore,
+} from './setting/SettingStore';
 import { selectionItemsFlattened } from './setting/UnitSelectionItem';
 import { quantityMaps, unitMap } from './units/Unit';
 
@@ -57,12 +61,6 @@ const UnitRow = ({
       </div>
     </div>
   );
-};
-
-const tripleKeyMathLabel: Record<TripleKeys, string> = {
-  plus: '+',
-  minus: '-',
-  diff: '\\Delta',
 };
 
 type ConversionTableTextColumn =

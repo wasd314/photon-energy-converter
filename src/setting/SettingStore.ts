@@ -10,9 +10,15 @@ const resolveSetStateAction = <T>(action: SetStateAction<T>, value: T) => {
 };
 
 type ColumnNumber = { single: number; triple: number };
-export type TripleKeys = 'plus' | 'minus' | 'diff';
+export const tripleKeys = ['plus', 'minus', 'diff'] as const;
+export type TripleKeys = (typeof tripleKeys)[number];
 type TripleUpdate = {
   [K in TripleKeys]: Exclude<TripleKeys, K>;
+};
+export const tripleKeyMathLabel: Record<TripleKeys, string> = {
+  plus: '+',
+  minus: '-',
+  diff: '\\Delta',
 };
 
 type SettingStoreState = {

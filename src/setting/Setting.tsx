@@ -3,17 +3,28 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
+import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
+import { useId } from 'react';
+import { InlineMath } from 'react-katex';
 import NumberSpinner from './components/NumberSpinner';
-
-import { useSettingStore } from './SettingStore';
+import {
+  type TripleKeys,
+  tripleKeyMathLabel,
+  tripleKeys,
+  useSettingStore,
+} from './SettingStore';
 import { KatexTreeItem } from './UnitSelect';
 import {
   selectionItems,
@@ -36,6 +47,8 @@ export const SettingsOverlay = ({
     setShowFormulae,
     columnNumber,
     setColumnNumber,
+    tripleUpdate,
+    setTripleUpdate,
     precision,
     setPrecision,
     fullOrder,
@@ -45,6 +58,8 @@ export const SettingsOverlay = ({
   } = useSettingStore();
 
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+
+  const formId = useId();
 
   const handleChangeShowQuantityName = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -64,6 +79,10 @@ export const SettingsOverlay = ({
   ) => {
     setSelectedUnitIds(ids.sort());
   };
+  const handleChangeTripleUpdate =
+    (key: TripleKeys) => (event: SelectChangeEvent) => {
+      setTripleUpdate((state) => ({ ...state, [key]: event.target.value }));
+    };
   const clampRound = (value: number, min: number, max: number) =>
     Math.max(min, Math.min(max, Math.round(value)));
   return (
@@ -161,6 +180,57 @@ export const SettingsOverlay = ({
                 }}
                 size="small"
               />
+            </Stack>
+
+            <Stack spacing={1} sx={{ alignItems: 'flex-start' }}>
+              <Typography variant="subtitle1">
+                Edit propagation in Triple mode
+              </Typography>
+              <Typography variant="subtitle2">
+                To keep the invariant{' '}
+                <InlineMath
+                  math={`X^${tripleKeyMathLabel.plus} - X^${tripleKeyMathLabel.minus} = X^${tripleKeyMathLabel.diff}`}
+                />
+                ,
+              </Typography>
+              <List dense disablePadding>
+                {tripleKeys.map((key) => (
+                  <ListItem key={key}>
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      sx={{ alignItems: 'center' }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{ minWidth: 100 }}
+                        id={`${formId}-assoc-${key}`}
+                      >
+                        Editing{' '}
+                        <InlineMath math={`X^${tripleKeyMathLabel[key]}`} />{' '}
+                        recomputes
+                      </Typography>
+                      <FormControl size="small" sx={{ minWidth: 60 }}>
+                        <Select
+                          aria-labelledby={`${formId}-assoc-${key}`}
+                          value={tripleUpdate[key]}
+                          onChange={handleChangeTripleUpdate(key)}
+                        >
+                          {tripleKeys
+                            .filter((nextKey) => nextKey !== key)
+                            .map((nextKey) => (
+                              <MenuItem key={nextKey} value={nextKey}>
+                                <InlineMath
+                                  math={`X^${tripleKeyMathLabel[nextKey]}`}
+                                />
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  </ListItem>
+                ))}
+              </List>
             </Stack>
           </Stack>
 
