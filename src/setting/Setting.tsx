@@ -64,8 +64,8 @@ export const SettingsOverlay = ({
   ) => {
     setSelectedUnitIds(ids.sort());
   };
-  const clampRound = (value: number, max: number) =>
-    Math.max(0, Math.min(max, Math.round(value)));
+  const clampRound = (value: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, Math.round(value)));
   return (
     <Dialog
       open={open}
@@ -108,48 +108,52 @@ export const SettingsOverlay = ({
                 label="Show conversion formulae"
               />
             </FormGroup>
-            <Typography variant="h6">Number of columns</Typography>
-            <Stack direction="row" spacing={2}>
+            <Stack>
+              <Typography variant="h6">Number of columns</Typography>
+              <Stack direction="row" spacing={2}>
+                <NumberSpinner
+                  label="Single"
+                  min={0}
+                  max={50}
+                  value={columnNumber.single}
+                  onValueChange={(value) => {
+                    if (value !== null)
+                      setColumnNumber((state) => ({
+                        ...state,
+                        single: clampRound(value, 0, 50),
+                      }));
+                  }}
+                  size="small"
+                />
+                <NumberSpinner
+                  label="Three"
+                  min={0}
+                  max={50}
+                  value={columnNumber.three}
+                  onValueChange={(value) => {
+                    if (value !== null)
+                      setColumnNumber((state) => ({
+                        ...state,
+                        three: clampRound(value, 0, 50),
+                      }));
+                  }}
+                  size="small"
+                />
+              </Stack>
+            </Stack>
+            <Stack sx={{ alignItems: 'flex-start' }}>
+              <Typography variant="h6">Calculation precision</Typography>
               <NumberSpinner
-                label="Single"
-                min={0}
-                max={50}
-                value={columnNumber.single}
+                label="Precision"
+                min={1}
+                max={20}
+                value={precision}
                 onValueChange={(value) => {
-                  if (value !== null)
-                    setColumnNumber((state) => ({
-                      ...state,
-                      single: clampRound(value, 50),
-                    }));
-                }}
-                size="small"
-              />
-              <NumberSpinner
-                label="Three"
-                min={0}
-                max={50}
-                value={columnNumber.three}
-                onValueChange={(value) => {
-                  if (value !== null)
-                    setColumnNumber((state) => ({
-                      ...state,
-                      three: clampRound(value, 50),
-                    }));
+                  if (value !== null) setPrecision(clampRound(value, 1, 20));
                 }}
                 size="small"
               />
             </Stack>
-            <Typography variant="h6">Calculation precision</Typography>
-            <NumberSpinner
-              label="Precision"
-              min={0}
-              max={20}
-              value={precision}
-              onValueChange={(value) => {
-                if (value !== null) setPrecision(clampRound(precision, 20));
-              }}
-              size="small"
-            />
           </Stack>
           <Stack spacing={2}>
             <Typography variant="h5" component="h3">
