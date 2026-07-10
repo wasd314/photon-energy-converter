@@ -23,10 +23,10 @@
 }
 
 .unit-columns-bundle {
+  padding: 3px 0;
   break-inside: avoid;
 }
 .unit-column-bundle {
-  padding: 2px 0;
   break-inside: avoid;
 }
 .unit-row {

@@ -1,6 +1,6 @@
 import 'katex/dist/katex.min.css';
 import './ConversionTable.css';
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
 import { enableMapSet } from 'immer';
 import { type JSX, useMemo } from 'react';
 import { BlockMath, InlineMath } from 'react-katex';
@@ -81,9 +81,8 @@ type ColumnIndex =
   | { tag: 'three'; index: [number, ThreeKeys] };
 
 export const ConversionTable = () => {
-  const numberSingleColumn = 2;
-  const numberThreeColumn = 1;
-
+  const columnNumber = useSettingStore((state) => state.columnNumber);
+  const precision = useSettingStore((state) => state.precision);
   const showQuantityName = useSettingStore((state) => state.showQuantityName);
   const showFormulae = useSettingStore((state) => state.showFormulae);
   const fullOrder = useSettingStore((store) => store.fullOrder);
@@ -98,15 +97,13 @@ export const ConversionTable = () => {
     return new Set([...selectedUnitIds, ...quantities]);
   }, [selectedUnitIds]);
 
+  const initMap = () =>
+    new Map(fullOrder.flatMap(([_, units]) => units.map((unit) => [unit, ''])));
   const emptyTable: () => ConversionTableTextColumn[] = () => {
-    const initMap = () =>
-      new Map(
-        fullOrder.flatMap(([_, units]) => units.map((unit) => [unit, '']))
-      );
     return Array.from(
-      { length: numberSingleColumn + numberThreeColumn },
+      { length: columnNumber.single + columnNumber.three },
       (_, i) => {
-        if (i < numberSingleColumn) {
+        if (i < columnNumber.single) {
           return { tag: 'single', column: initMap() };
         } else {
           return {
@@ -118,6 +115,45 @@ export const ConversionTable = () => {
     );
   };
   const [texts, setTexts] = useImmer(emptyTable());
+
+  // reset texts if columnNumber is different
+  {
+    const currentColumnNumber = {
+      single: texts.reduce(
+        (acc, col) => acc + (col.tag === 'single' ? 1 : 0),
+        0
+      ),
+      three: texts.reduce((acc, col) => acc + (col.tag === 'three' ? 1 : 0), 0),
+    };
+    if (
+      columnNumber.single !== currentColumnNumber.single ||
+      columnNumber.three !== currentColumnNumber.three
+    ) {
+      setTexts((texts) => {
+        const textsSingle = texts.filter((col) => col.tag === 'single');
+        const textsThree = texts.filter((col) => col.tag === 'three');
+        return [
+          ...Array.from({ length: columnNumber.single }, (_, i) =>
+            i < textsSingle.length
+              ? textsSingle[i]
+              : { tag: 'single', column: initMap() }
+          ),
+          ...Array.from({ length: columnNumber.three }, (_, i) =>
+            i < textsThree.length
+              ? textsThree[i]
+              : {
+                  tag: 'three',
+                  column: {
+                    plus: initMap(),
+                    minus: initMap(),
+                    diff: initMap(),
+                  },
+                }
+          ),
+        ];
+      });
+    }
+  }
 
   // 更新後の文字列が number と解釈できたときにそれを他のセルに反映する
   const newColumnFromJoule = (
@@ -131,7 +167,7 @@ export const ConversionTable = () => {
           unit.mathUnit,
           unit.mathUnit === updatedUnit
             ? updatedText
-            : unit.fromJoule(newJoule).toPrecision(10),
+            : unit.fromJoule(newJoule).toPrecision(precision),
         ])
       )
     );
