@@ -33,7 +33,7 @@ export interface Quantity {
   /** 物理量の名前 */
   quantityName: string;
   /** KaTeX 表示の量記号 */
-  mathQuantity: string;
+  mathQuantity: (index: string) => string;
   /** KaTeX 表示のエネルギーとの変換公式 */
   mathConversionFormula: string;
   units: (Unit | MultipleOfUnits)[];
@@ -71,7 +71,7 @@ const multipleLabelHelper = (mathBaseUnit: string) => ({
 export const quantities: Quantity[] = [
   {
     quantityName: 'Energy',
-    mathQuantity: 'E',
+    mathQuantity: (index: string) => `E_{${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{E}{\\mathrm{eV}} \\cdot \\frac{e}{\\mathrm{C}}',
     units: [
@@ -100,7 +100,7 @@ export const quantities: Quantity[] = [
   },
   {
     quantityName: 'Molar energy',
-    mathQuantity: 'E_\\text{m}',
+    mathQuantity: (index: string) => `E_{\\text{m}, ${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{E_\\text{m}}{\\mathrm{kJ} \\, \\mathrm{mol}^{-1}} \\cdot \\frac{N_\\text{A}^{-1}}{\\mathrm{mol}} \\cdot \\frac{\\mathrm{kJ}}{\\mathrm{J}}',
     units: [
@@ -120,7 +120,7 @@ export const quantities: Quantity[] = [
   },
   {
     quantityName: 'Wavelength',
-    mathQuantity: '\\lambda',
+    mathQuantity: (index: string) => `\\lambda_{${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{\\lambda^{-1}}{\\mathrm{m}^{-1}} \\cdot \\frac{h c}{\\mathrm{J} \\, \\mathrm{m}}',
     units: [
@@ -150,7 +150,7 @@ export const quantities: Quantity[] = [
   },
   {
     quantityName: 'Wavenumber',
-    mathQuantity: '\\tilde{\\nu}',
+    mathQuantity: (index: string) => `\\tilde{\\nu}_{${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{\\tilde{\\nu}}{\\mathrm{cm}^{-1}} \\cdot \\frac{h c}{\\mathrm{J} \\, \\mathrm{cm}}',
     units: [
@@ -173,7 +173,7 @@ export const quantities: Quantity[] = [
   },
   {
     quantityName: 'Period',
-    mathQuantity: '\\tau',
+    mathQuantity: (index: string) => `\\tau_{${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{\\tau^{-1}}{\\mathrm{s}^{-1}} \\cdot \\frac{h}{\\mathrm{J} \\, \\mathrm{s}}',
     units: [
@@ -191,7 +191,7 @@ export const quantities: Quantity[] = [
   },
   {
     quantityName: 'Frequency',
-    mathQuantity: '\\nu',
+    mathQuantity: (index: string) => `\\nu_{${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{\\nu}{\\mathrm{Hz}} \\cdot \\frac{h}{\\mathrm{J} \\, \\mathrm{s}}',
     units: [
@@ -210,7 +210,7 @@ export const quantities: Quantity[] = [
   },
   {
     quantityName: 'Angular frequency',
-    mathQuantity: '\\omega',
+    mathQuantity: (index: string) => `\\omega_{${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{\\omega}{\\mathrm{rad} \\, \\mathrm{s}^{-1}} \\cdot \\frac{\\hbar}{\\mathrm{J} \\, \\mathrm{s} \\, \\mathrm{rad}^{-1}}',
     units: [
@@ -228,7 +228,7 @@ export const quantities: Quantity[] = [
   },
   {
     quantityName: 'Temperature',
-    mathQuantity: 'T',
+    mathQuantity: (index: string) => `T_{${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{T}{\\mathrm{K}} \\cdot \\frac{k_\\text{B}}{\\mathrm{J} \\, \\mathrm{K}^{-1}}',
     units: [
@@ -241,7 +241,7 @@ export const quantities: Quantity[] = [
   },
   {
     quantityName: 'Magnetic flux density',
-    mathQuantity: 'B',
+    mathQuantity: (index: string) => `B_{${index}}`,
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{B}{\\mathrm{T}} \\cdot \\frac{\\mu_\\text{B}}{\\mathrm{J} \\, \\mathrm{T}^{-1}}',
     units: [
