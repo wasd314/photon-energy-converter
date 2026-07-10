@@ -14,12 +14,12 @@
   margin-bottom: 5px;
   width: 100%;
 }
-.quantity-block-body {
-  columns: 320px;
-}
 .quantity-name {
   font-weight: bold;
   margin-bottom: 5px;
+}
+.quantity-block-body {
+  columns: 320px;
 }
 
 .unit-columns-bundle {
