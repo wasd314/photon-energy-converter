@@ -11,6 +11,8 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
+import NumberSpinner from './components/NumberSpinner';
+
 import { useSettingStore } from './SettingStore';
 import { KatexTreeItem } from './UnitSelect';
 import {
@@ -32,6 +34,10 @@ export const SettingsOverlay = ({
     setShowQuantityName,
     showFormulae,
     setShowFormulae,
+    columnNumber,
+    setColumnNumber,
+    precision,
+    setPrecision,
     fullOrder,
     setFullOrder,
     selectedUnitIds,
@@ -58,6 +64,8 @@ export const SettingsOverlay = ({
   ) => {
     setSelectedUnitIds(ids.sort());
   };
+  const clampRound = (value: number, max: number) =>
+    Math.max(0, Math.min(max, Math.round(value)));
   return (
     <Dialog
       open={open}
@@ -100,6 +108,48 @@ export const SettingsOverlay = ({
                 label="Show conversion formulae"
               />
             </FormGroup>
+            <Typography variant="h6">Number of columns</Typography>
+            <Stack direction="row" spacing={2}>
+              <NumberSpinner
+                label="Single"
+                min={0}
+                max={50}
+                value={columnNumber.single}
+                onValueChange={(value) => {
+                  if (value !== null)
+                    setColumnNumber((state) => ({
+                      ...state,
+                      single: clampRound(value, 50),
+                    }));
+                }}
+                size="small"
+              />
+              <NumberSpinner
+                label="Three"
+                min={0}
+                max={50}
+                value={columnNumber.three}
+                onValueChange={(value) => {
+                  if (value !== null)
+                    setColumnNumber((state) => ({
+                      ...state,
+                      three: clampRound(value, 50),
+                    }));
+                }}
+                size="small"
+              />
+            </Stack>
+            <Typography variant="h6">Calculation precision</Typography>
+            <NumberSpinner
+              label="Precision"
+              min={0}
+              max={20}
+              value={precision}
+              onValueChange={(value) => {
+                if (value !== null) setPrecision(clampRound(precision, 20));
+              }}
+              size="small"
+            />
           </Stack>
           <Stack spacing={2}>
             <Typography variant="h5" component="h3">
@@ -121,6 +171,7 @@ export const SettingsOverlay = ({
             </Stack>
             <Stack>
               <Typography variant="h6">Order</Typography>
+              <Typography>Drag and drop to rearrange items.</Typography>
               {selectedUnitIds.length > 0 ? (
                 <UnitSorterTree
                   fullOrder={fullOrder}
