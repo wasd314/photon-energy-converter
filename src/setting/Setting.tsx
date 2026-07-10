@@ -34,8 +34,8 @@ export const SettingsOverlay = ({
     setShowFormulae,
     fullOrder,
     setFullOrder,
-    selectedUnitIds: selectedIds,
-    setSelectedUnitIds: setSelectedIds,
+    selectedUnitIds,
+    setSelectedUnitIds,
   } = useSettingStore();
 
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
@@ -56,7 +56,7 @@ export const SettingsOverlay = ({
     _event: React.SyntheticEvent | null,
     ids: string[]
   ) => {
-    setSelectedIds(ids.sort());
+    setSelectedUnitIds(ids.sort());
   };
   return (
     <Dialog
@@ -115,17 +115,17 @@ export const SettingsOverlay = ({
                 isItemSelectionDisabled={isItemSelectionDisabled}
                 itemChildrenIndentation={24}
                 defaultExpandedItems={selectionItemsFlattened.map((q) => q.id)}
-                selectedItems={selectedIds}
+                selectedItems={selectedUnitIds}
                 slots={{ item: KatexTreeItem }}
               />
             </Stack>
             <Stack>
               <Typography variant="h6">Order</Typography>
-              {selectedIds.length > 0 ? (
+              {selectedUnitIds.length > 0 ? (
                 <UnitSorterTree
                   fullOrder={fullOrder}
                   setFullOrder={setFullOrder}
-                  selectedIds={selectedIds}
+                  selectedIds={selectedUnitIds}
                 />
               ) : (
                 <Typography color="textDisabled">Unit Not selected</Typography>
