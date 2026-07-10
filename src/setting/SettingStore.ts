@@ -10,11 +10,16 @@ const resolveSetStateAction = <T>(action: SetStateAction<T>, value: T) => {
 };
 
 type ColumnNumber = { single: number; triple: number };
+export type TripleKeys = 'plus' | 'minus' | 'diff';
+type TripleUpdate = {
+  [K in TripleKeys]: Exclude<TripleKeys, K>;
+};
 
 type SettingStoreState = {
   showQuantityName: boolean;
   showFormulae: boolean;
   columnNumber: ColumnNumber;
+  tripleUpdate: TripleUpdate;
   precision: number;
   fullOrder: FullOrder;
   selectedUnitIds: string[];
@@ -22,8 +27,9 @@ type SettingStoreState = {
 type SettingStoreActions = {
   setShowQuantityName: Dispatch<SetStateAction<boolean>>;
   setShowFormulae: Dispatch<SetStateAction<boolean>>;
-  setPrecision: Dispatch<SetStateAction<number>>;
   setColumnNumber: Dispatch<SetStateAction<ColumnNumber>>;
+  setTripleUpdate: Dispatch<SetStateAction<TripleUpdate>>;
+  setPrecision: Dispatch<SetStateAction<number>>;
   setFullOrder: Dispatch<SetStateAction<FullOrder>>;
   setSelectedUnitIds: Dispatch<SetStateAction<string[]>>;
 };
@@ -34,13 +40,18 @@ export const useSettingStore = create<SettingStore>()(
     (set) => ({
       showQuantityName: true,
       showFormulae: false,
-      precision: 10,
-      fullOrder: fullOrderInitial,
-      selectedUnitIds: [],
       columnNumber: {
         single: 1,
         triple: 1,
       },
+      tripleUpdate: {
+        plus: 'minus',
+        minus: 'diff',
+        diff: 'minus',
+      },
+      precision: 10,
+      fullOrder: fullOrderInitial,
+      selectedUnitIds: [],
       setShowQuantityName: (action) =>
         set((state) => ({
           showQuantityName: resolveSetStateAction(
@@ -52,13 +63,17 @@ export const useSettingStore = create<SettingStore>()(
         set((state) => ({
           showFormulae: resolveSetStateAction(action, state.showFormulae),
         })),
-      setPrecision: (action) =>
-        set((state) => ({
-          precision: resolveSetStateAction(action, state.precision),
-        })),
       setColumnNumber: (action) =>
         set((state) => ({
           columnNumber: resolveSetStateAction(action, state.columnNumber),
+        })),
+      setTripleUpdate: (action) =>
+        set((state) => ({
+          tripleUpdate: resolveSetStateAction(action, state.tripleUpdate),
+        })),
+      setPrecision: (action) =>
+        set((state) => ({
+          precision: resolveSetStateAction(action, state.precision),
         })),
       setFullOrder: (action) =>
         set((state) => ({
