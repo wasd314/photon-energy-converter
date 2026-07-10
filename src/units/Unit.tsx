@@ -38,13 +38,9 @@ export interface Quantity {
   mathConversionFormula: string;
   units: (Unit | MultipleOfUnits)[];
 }
-export interface QuantityWithFlatMap {
-  /** 物理量の名前 */
-  quantityName: string;
-  /** KaTeX 表示の量記号 */
-  mathQuantity: string;
-  /** KaTeX 表示のエネルギーとの変換公式 */
-  mathConversionFormula: string;
+export interface QuantityWithFlatMap extends Quantity {
+  /** flattened array */
+  units: Unit[];
   /** mathUnit => Unit */
   unitMap: Map<string, Unit>;
 }
@@ -254,15 +250,25 @@ export const quantities: Quantity[] = [
   },
 ];
 
-export const quantityMaps: QuantityWithFlatMap[] = quantities.map(
-  (quantity) => {
+export const quantityMaps: Map<string, QuantityWithFlatMap> = new Map(
+  quantities.map((quantity) => {
     const { units, ...rest } = quantity;
     const unitsFlattened = units.flatMap((value) =>
       isUnit(value) ? [value] : value.series
     );
-    return {
-      ...rest,
-      unitMap: new Map(unitsFlattened.map((unit) => [unit.mathUnit, unit])),
-    };
-  }
+    return [
+      rest.quantityName,
+      {
+        ...rest,
+        units: unitsFlattened,
+        unitMap: new Map(unitsFlattened.map((unit) => [unit.mathUnit, unit])),
+      },
+    ];
+  })
+);
+
+export const unitMap = new Map(
+  Array.from(quantityMaps.values()).flatMap((quantity) =>
+    quantity.units.map((unit) => [unit.mathUnit, unit])
+  )
 );
