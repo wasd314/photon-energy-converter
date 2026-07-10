@@ -11,7 +11,7 @@ import {
   useSettingStore,
 } from './setting/SettingStore';
 import { selectionItemsFlattened } from './setting/UnitSelectionItem';
-import { quantityMaps, unitMap } from './units/Unit';
+import { JOULE_LABEL, quantityMaps, unitMap } from './units/Unit';
 
 enableMapSet();
 
@@ -78,10 +78,11 @@ type ColumnIndex =
   | { tag: 'triple'; index: [number, TripleKeys] };
 
 export const ConversionTable = () => {
-  const columnNumber = useSettingStore((state) => state.columnNumber);
-  const precision = useSettingStore((state) => state.precision);
   const showQuantityName = useSettingStore((state) => state.showQuantityName);
   const showFormulae = useSettingStore((state) => state.showFormulae);
+  const columnNumber = useSettingStore((state) => state.columnNumber);
+  const tripleUpdate = useSettingStore((state) => state.tripleUpdate);
+  const precision = useSettingStore((state) => state.precision);
   const fullOrder = useSettingStore((store) => store.fullOrder);
   const selectedUnitIds = useSettingStore((store) => store.selectedUnitIds);
   const selectedIdSet = useMemo(() => {
@@ -172,7 +173,7 @@ export const ConversionTable = () => {
       )
     );
   };
-  const parseText = (unit: string, newText: string) => {
+  const parseText = (unit: string, newText: string | undefined) => {
     const unitInfo = unitMap.get(unit);
     const valueParsed = Number(newText);
     // Number('') === +0: number
@@ -191,30 +192,67 @@ export const ConversionTable = () => {
     setTexts((texts) => {
       const newJoule = parseText(updatedUnit, updatedText);
       if (tag === 'single') {
-        if (texts[index].tag === tag) {
-          if (newJoule === undefined) {
-            texts[index].column.set(updatedUnit, updatedText);
-          } else {
-            texts[index].column = newColumnFromJoule(
-              newJoule,
-              updatedUnit,
-              updatedText
-            );
-          }
+        if (texts[index].tag !== tag) return;
+        if (newJoule === undefined) {
+          texts[index].column.set(updatedUnit, updatedText);
+          return;
         }
+        texts[index].column = newColumnFromJoule(
+          newJoule,
+          updatedUnit,
+          updatedText
+        );
       } else {
         const columns = texts[index[0]];
-        if (columns.tag === tag) {
-          if (newJoule === undefined) {
-            columns.column[index[1]].set(updatedUnit, updatedText);
-          } else {
-            columns.column[index[1]] = newColumnFromJoule(
-              newJoule,
-              updatedUnit,
-              updatedText
-            );
-          }
+        if (columns.tag !== tag) return;
+        if (newJoule === undefined) {
+          columns.column[index[1]].set(updatedUnit, updatedText);
+          return;
         }
+        columns.column[index[1]] = newColumnFromJoule(
+          newJoule,
+          updatedUnit,
+          updatedText
+        );
+
+        // To keep invariant, edit followingKey based on newJoule and fixedJoule
+        const followingKey = tripleUpdate[index[1]];
+        const joules = {
+          plus: parseText(JOULE_LABEL, columns.column.plus.get(JOULE_LABEL)),
+          minus: parseText(JOULE_LABEL, columns.column.minus.get(JOULE_LABEL)),
+          diff: parseText(JOULE_LABEL, columns.column.diff.get(JOULE_LABEL)),
+        };
+
+        if (
+          followingKey === 'plus' &&
+          joules.minus !== undefined &&
+          joules.diff !== undefined
+        )
+          columns.column.plus = newColumnFromJoule(
+            joules.minus + joules.diff,
+            '',
+            ''
+          );
+        if (
+          followingKey === 'minus' &&
+          joules.plus !== undefined &&
+          joules.diff !== undefined
+        )
+          columns.column.minus = newColumnFromJoule(
+            joules.plus - joules.diff,
+            '',
+            ''
+          );
+        if (
+          followingKey === 'diff' &&
+          joules.plus !== undefined &&
+          joules.minus !== undefined
+        )
+          columns.column.diff = newColumnFromJoule(
+            joules.plus - joules.minus,
+            '',
+            ''
+          );
       }
     });
   };

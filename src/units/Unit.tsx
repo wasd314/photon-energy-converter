@@ -64,6 +64,8 @@ const multipleLabelHelper = (mathBaseUnit: string) => ({
   ),
 });
 
+export const JOULE_LABEL = '\\mathrm{J}';
+
 export const quantities: Quantity[] = [
   {
     quantityName: 'Energy',
@@ -75,7 +77,7 @@ export const quantities: Quantity[] = [
         ...multipleLabelHelper('\\mathrm{J}'),
         series: [
           {
-            mathUnit: '\\mathrm{J}',
+            mathUnit: JOULE_LABEL,
             // J / J
             ...proportionalHelper(1),
           },
