@@ -136,12 +136,12 @@ export const SettingsOverlay = ({
                   label="Triple mode"
                   min={0}
                   max={50}
-                  value={columnNumber.three}
+                  value={columnNumber.triple}
                   onValueChange={(value) => {
                     if (value !== null)
                       setColumnNumber((state) => ({
                         ...state,
-                        three: clampRound(value, 0, 50),
+                        triple: clampRound(value, 0, 50),
                       }));
                   }}
                   size="small"

@@ -9,7 +9,7 @@ const resolveSetStateAction = <T>(action: SetStateAction<T>, value: T) => {
     : action;
 };
 
-type ColumnNumber = { single: number; three: number };
+type ColumnNumber = { single: number; triple: number };
 
 type SettingStoreState = {
   showQuantityName: boolean;
@@ -39,7 +39,7 @@ export const useSettingStore = create<SettingStore>()(
       selectedUnitIds: [],
       columnNumber: {
         single: 1,
-        three: 1,
+        triple: 1,
       },
       setShowQuantityName: (action) =>
         set((state) => ({

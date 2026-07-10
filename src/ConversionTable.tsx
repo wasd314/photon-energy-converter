@@ -59,8 +59,8 @@ const UnitRow = ({
   );
 };
 
-type ThreeKeys = 'plus' | 'minus' | 'diff';
-const threeKeyMathLabel: Record<ThreeKeys, string> = {
+type TripleKeys = 'plus' | 'minus' | 'diff';
+const tripleKeyMathLabel: Record<TripleKeys, string> = {
   plus: '+',
   minus: '-',
   diff: '\\Delta',
@@ -72,13 +72,13 @@ type ConversionTableTextColumn =
       column: Map<string, string>;
     }
   | {
-      tag: 'three';
-      column: Record<ThreeKeys, Map<string, string>>;
+      tag: 'triple';
+      column: Record<TripleKeys, Map<string, string>>;
     };
 
 type ColumnIndex =
   | { tag: 'single'; index: number }
-  | { tag: 'three'; index: [number, ThreeKeys] };
+  | { tag: 'triple'; index: [number, TripleKeys] };
 
 export const ConversionTable = () => {
   const columnNumber = useSettingStore((state) => state.columnNumber);
@@ -101,13 +101,13 @@ export const ConversionTable = () => {
     new Map(fullOrder.flatMap(([_, units]) => units.map((unit) => [unit, ''])));
   const emptyTable: () => ConversionTableTextColumn[] = () => {
     return Array.from(
-      { length: columnNumber.single + columnNumber.three },
+      { length: columnNumber.single + columnNumber.triple },
       (_, i) => {
         if (i < columnNumber.single) {
           return { tag: 'single', column: initMap() };
         } else {
           return {
-            tag: 'three',
+            tag: 'triple',
             column: { plus: initMap(), minus: initMap(), diff: initMap() },
           };
         }
@@ -123,26 +123,29 @@ export const ConversionTable = () => {
         (acc, col) => acc + (col.tag === 'single' ? 1 : 0),
         0
       ),
-      three: texts.reduce((acc, col) => acc + (col.tag === 'three' ? 1 : 0), 0),
+      triple: texts.reduce(
+        (acc, col) => acc + (col.tag === 'triple' ? 1 : 0),
+        0
+      ),
     };
     if (
       columnNumber.single !== currentColumnNumber.single ||
-      columnNumber.three !== currentColumnNumber.three
+      columnNumber.triple !== currentColumnNumber.triple
     ) {
       setTexts((texts) => {
         const textsSingle = texts.filter((col) => col.tag === 'single');
-        const textsThree = texts.filter((col) => col.tag === 'three');
+        const textsTriple = texts.filter((col) => col.tag === 'triple');
         return [
           ...Array.from({ length: columnNumber.single }, (_, i) =>
             i < textsSingle.length
               ? textsSingle[i]
               : { tag: 'single', column: initMap() }
           ),
-          ...Array.from({ length: columnNumber.three }, (_, i) =>
-            i < textsThree.length
-              ? textsThree[i]
+          ...Array.from({ length: columnNumber.triple }, (_, i) =>
+            i < textsTriple.length
+              ? textsTriple[i]
               : {
-                  tag: 'three',
+                  tag: 'triple',
                   column: {
                     plus: initMap(),
                     minus: initMap(),
@@ -258,10 +261,10 @@ export const ConversionTable = () => {
               return units.map(({ mathUnit }, j) => (
                 <UnitRow
                   key={`${i}--${key}--${j}`}
-                  index={{ tag: 'three', index: [i, key] }}
+                  index={{ tag: 'triple', index: [i, key] }}
                   mathQuantity={
                     j === 0
-                      ? `${mathQuantity(index)}^{${threeKeyMathLabel[key]}}`
+                      ? `${mathQuantity(index)}^{${tripleKeyMathLabel[key]}}`
                       : ''
                   }
                   mathUnit={mathUnit}
