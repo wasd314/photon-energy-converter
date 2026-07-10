@@ -1,4 +1,4 @@
-// See: https://github.com/mui/material-ui/blob/master/docs/data/material/components/number-field/components/NumberSpinner.tsx
+// Modified from: https://github.com/mui/material-ui/blob/master/docs/data/material/components/number-field/components/NumberSpinner.tsx
 import { NumberField as BaseNumberField } from '@base-ui/react/number-field';
 import AddIcon from '@mui/icons-material/Add';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
@@ -118,7 +118,8 @@ export default function NumberSpinner({
                   size:
                     Math.max(
                       (other.min?.toString() || '').length,
-                      state.inputValue.length || 1
+                      (other.max?.toString() || '').length,
+                      1
                     ) + 1,
                   sx: {
                     textAlign: 'center',
