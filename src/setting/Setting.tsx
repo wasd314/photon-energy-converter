@@ -88,31 +88,38 @@ export const SettingsOverlay = ({
             <Typography variant="h5" component="h3">
               Display
             </Typography>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={showQuantityName}
-                    onChange={handleChangeShowQuantityName}
-                  />
-                }
-                label="Show quantity names"
-              />
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={showFormulae}
-                    onChange={handleChangeShowFormulae}
-                  />
-                }
-                label="Show conversion formulae"
-              />
-            </FormGroup>
-            <Stack>
-              <Typography variant="h6">Number of columns</Typography>
-              <Stack direction="row" spacing={2}>
+
+            <Stack spacing={1}>
+              <Typography variant="subtitle1">Header information</Typography>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={showQuantityName}
+                      onChange={handleChangeShowQuantityName}
+                    />
+                  }
+                  label="Show quantity names"
+                />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={showFormulae}
+                      onChange={handleChangeShowFormulae}
+                    />
+                  }
+                  label="Show conversion formulae"
+                />
+              </FormGroup>
+            </Stack>
+
+            <Stack spacing={1}>
+              <Typography variant="subtitle1">
+                Number of value series
+              </Typography>
+              <Stack direction="row" spacing={1}>
                 <NumberSpinner
-                  label="Single"
+                  label="Single mode"
                   min={0}
                   max={50}
                   value={columnNumber.single}
@@ -126,7 +133,7 @@ export const SettingsOverlay = ({
                   size="small"
                 />
                 <NumberSpinner
-                  label="Three"
+                  label="Triple mode"
                   min={0}
                   max={50}
                   value={columnNumber.three}
@@ -141,10 +148,11 @@ export const SettingsOverlay = ({
                 />
               </Stack>
             </Stack>
+
             <Stack sx={{ alignItems: 'flex-start' }}>
-              <Typography variant="h6">Calculation precision</Typography>
+              <Typography variant="subtitle1">Calculation precision</Typography>
               <NumberSpinner
-                label="Precision"
+                label="Significant digits"
                 min={1}
                 max={20}
                 value={precision}
@@ -155,12 +163,13 @@ export const SettingsOverlay = ({
               />
             </Stack>
           </Stack>
+
           <Stack spacing={2}>
             <Typography variant="h5" component="h3">
               Quantities, Units
             </Typography>
             <Stack>
-              <Typography variant="h6">Unit Select</Typography>
+              <Typography variant="subtitle1">Unit Select</Typography>
               <RichTreeView
                 items={selectionItems}
                 multiSelect
@@ -174,8 +183,10 @@ export const SettingsOverlay = ({
               />
             </Stack>
             <Stack>
-              <Typography variant="h6">Order</Typography>
-              <Typography>Drag and drop to rearrange items.</Typography>
+              <Typography variant="subtitle1">Order</Typography>
+              <Typography variant="subtitle2">
+                Drag and drop to rearrange items.
+              </Typography>
               {selectedUnitIds.length > 0 ? (
                 <UnitSorterTree
                   fullOrder={fullOrder}
