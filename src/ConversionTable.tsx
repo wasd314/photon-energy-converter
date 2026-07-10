@@ -193,63 +193,74 @@ export const ConversionTable = () => {
     const { mathQuantity, mathConversionFormula, unitMap } = quantity;
 
     const rows: JSX.Element[] = [];
-    if (showQuantityName) {
-      rows.push(
-        <div className="quantity-header" key="quantityName">
-          {quantityName}
-        </div>
-      );
-    }
-    if (showFormulae) {
-      rows.push(
-        <div key="conversionFormula">
-          <BlockMath math={mathConversionFormula} />
-        </div>
-      );
-    }
+
     const units = unitIds.flatMap((unitId) => {
       const unit = unitMap.get(unitId);
       return unit === undefined || !selectedIdSet.has(unitId) ? [] : [unit];
     });
 
     rows.push(
-      ...texts.flatMap(({ tag, column }, i) => {
-        const index = `${i + 1}`;
-        if (tag === 'single') {
-          return units.map(({ mathUnit }, j) => (
-            <UnitRow
-              key={`${i}--${j}`}
-              index={{ tag: 'single', index: i }}
-              mathQuantity={j === 0 ? mathQuantity(index) : ''}
-              mathUnit={mathUnit}
-              text={column.get(mathUnit)!}
-              recordCellUpdate={recordCellUpdate}
-            />
-          ));
-        } else {
-          return (['plus', 'minus', 'diff'] as const).flatMap((key) => {
-            const col = column[key];
-            return units.map(({ mathUnit }, j) => (
-              <UnitRow
-                key={`${i}--${key}--${j}`}
-                index={{ tag: 'three', index: [i, key] }}
-                mathQuantity={
-                  j === 0
-                    ? `${mathQuantity(index)}^{${threeKeyMathLabel[key]}}`
-                    : ''
-                }
-                mathUnit={mathUnit}
-                text={col.get(mathUnit)!}
-                recordCellUpdate={recordCellUpdate}
-              />
-            ));
-          });
-        }
-      })
+      ...texts
+        .map(({ tag, column }, i) => {
+          const index = `${i + 1}`;
+          if (tag === 'single') {
+            return [
+              units.map(({ mathUnit }, j) => (
+                <UnitRow
+                  key={`${i}--${j}`}
+                  index={{ tag: 'single', index: i }}
+                  mathQuantity={j === 0 ? mathQuantity(index) : ''}
+                  mathUnit={mathUnit}
+                  text={column.get(mathUnit)!}
+                  recordCellUpdate={recordCellUpdate}
+                />
+              )),
+            ];
+          } else {
+            return (['plus', 'minus', 'diff'] as const).map((key) => {
+              const col = column[key];
+              return units.map(({ mathUnit }, j) => (
+                <UnitRow
+                  key={`${i}--${key}--${j}`}
+                  index={{ tag: 'three', index: [i, key] }}
+                  mathQuantity={
+                    j === 0
+                      ? `${mathQuantity(index)}^{${threeKeyMathLabel[key]}}`
+                      : ''
+                  }
+                  mathUnit={mathUnit}
+                  text={col.get(mathUnit)!}
+                  recordCellUpdate={recordCellUpdate}
+                />
+              ));
+            });
+          }
+        })
+        .map((rows, i) => (
+          <div key={i} className="unit-columns-bundle">
+            {rows.map((row, j) => (
+              <div key={j} className="unit-column-bundle">
+                {row}
+              </div>
+            ))}
+          </div>
+        ))
     );
     return (
       <div key={quantityName} className="quantity-block">
-        {rows}
+        <div className="quantity-header">
+          {showQuantityName && (
+            <div className="quantity-name" key="quantityName">
+              {quantityName}
+            </div>
+          )}
+          {showFormulae && (
+            <div key="conversionFormula">
+              <BlockMath math={mathConversionFormula} />
+            </div>
+          )}
+        </div>
+        <div className="quantity-block-body">{rows}</div>
       </div>
     );
   });
