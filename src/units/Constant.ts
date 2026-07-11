@@ -18,3 +18,6 @@ export const AVOGADRO_CONSTANT = 6.02214076e23;
 
 /** µ_B / J T^{-1} (not a defining constant; 2022 CODATA recommended values) */
 export const BOHR_MAGNETON = 9.2740100657e-24;
+
+/** 0 °C in K */
+export const ZERO_DEGREE_CELSIUS = 273.15;
