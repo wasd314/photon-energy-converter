@@ -38,26 +38,31 @@ type SettingStoreActions = {
   setPrecision: Dispatch<SetStateAction<number>>;
   setFullOrder: Dispatch<SetStateAction<FullOrder>>;
   setSelectedUnitIds: Dispatch<SetStateAction<string[]>>;
+  restoreDefault: () => void;
 };
 type SettingStore = SettingStoreState & SettingStoreActions;
+
+export const defaultSettings: () => SettingStoreState = () => ({
+  showQuantityName: true,
+  showFormulae: false,
+  columnNumber: {
+    single: 1,
+    triple: 1,
+  },
+  tripleUpdate: {
+    plus: 'minus',
+    minus: 'diff',
+    diff: 'plus',
+  },
+  precision: 10,
+  fullOrder: fullOrderInitial,
+  selectedUnitIds: [],
+});
 
 export const useSettingStore = create<SettingStore>()(
   persist(
     (set) => ({
-      showQuantityName: true,
-      showFormulae: false,
-      columnNumber: {
-        single: 1,
-        triple: 1,
-      },
-      tripleUpdate: {
-        plus: 'minus',
-        minus: 'diff',
-        diff: 'minus',
-      },
-      precision: 10,
-      fullOrder: fullOrderInitial,
-      selectedUnitIds: [],
+      ...defaultSettings(),
       setShowQuantityName: (action) =>
         set((state) => ({
           showQuantityName: resolveSetStateAction(
@@ -89,6 +94,7 @@ export const useSettingStore = create<SettingStore>()(
         set((state) => ({
           selectedUnitIds: resolveSetStateAction(action, state.selectedUnitIds),
         })),
+      restoreDefault: () => set((_state) => defaultSettings()),
     }),
     {
       name: 'photon-energy-converter',
