@@ -12,13 +12,15 @@ import {
   SPEED_OF_LIGHT,
 } from './Constant';
 
-export interface Unit {
-  /** KaTeX 表示の単位 */
-  mathUnit: string;
+interface JouleConversion {
   /** E / J への変換 */
   toJoule: (x: number) => number;
   /** E / J からの変換 */
   fromJoule: (x: number) => number;
+}
+export interface Unit extends JouleConversion {
+  /** KaTeX 表示の単位 */
+  mathUnit: string;
 }
 
 export interface MultipleOfUnits {
@@ -59,10 +61,69 @@ const multipleLabelHelper = (mathBaseUnit: string) => ({
   seriesLabel: `Multiples of ${mathBaseUnit}`,
   seriesLabelNode: (
     <Typography>
-      Multiples of <InlineMath math={mathBaseUnit} />{' '}
+      Multiples of <InlineMath math={mathBaseUnit} />
     </Typography>
   ),
 });
+type SiPrefix = {
+  prefix: string;
+  multiple: number;
+};
+const siPrefixes: SiPrefix[] = [
+  { prefix: 'E', multiple: 1e18 },
+  { prefix: 'P', multiple: 1e15 },
+  { prefix: 'T', multiple: 1e12 },
+  { prefix: 'G', multiple: 1e9 },
+  { prefix: 'M', multiple: 1e6 },
+  { prefix: 'k', multiple: 1e3 },
+
+  { prefix: 'm', multiple: 1e-3 },
+  { prefix: 'µ', multiple: 1e-6 },
+  { prefix: 'n', multiple: 1e-9 },
+  { prefix: 'p', multiple: 1e-12 },
+  { prefix: 'f', multiple: 1e-15 },
+  { prefix: 'a', multiple: 1e-18 },
+];
+const inclusiveSlice = ({
+  siPrefixes: prefixes,
+  start,
+  stop,
+}: {
+  siPrefixes: SiPrefix[];
+  start?: string;
+  stop?: string;
+}) => {
+  const il =
+    start === undefined
+      ? undefined
+      : prefixes.indexOf(prefixes.find((prefix) => prefix.prefix === start)!);
+  const ir =
+    stop === undefined
+      ? undefined
+      : prefixes.indexOf(prefixes.find((prefix) => prefix.prefix === stop)!);
+  return prefixes.slice(il, ir);
+};
+
+interface SiMultipleHelperProps {
+  toMathLabel: (prefix: string) => string;
+  helper: (coeff: number) => JouleConversion;
+  prefixes: SiPrefix[];
+  baseCoeff: number;
+  multiply: 'multiply' | 'divide';
+}
+const siMultipleHelper: (props: SiMultipleHelperProps) => Unit[] = ({
+  toMathLabel,
+  helper,
+  prefixes,
+  baseCoeff,
+  multiply,
+}: SiMultipleHelperProps) =>
+  prefixes.map(({ prefix, multiple }) => ({
+    mathUnit: toMathLabel(prefix),
+    ...helper(
+      multiply === 'multiply' ? baseCoeff * multiple : baseCoeff / multiple
+    ),
+  }));
 
 export const JOULE_LABEL = '\\mathrm{J}';
 
@@ -73,6 +134,11 @@ export const quantities: Quantity[] = [
     mathConversionFormula:
       '\\frac{E}{\\mathrm{J}} = \\frac{E}{\\mathrm{eV}} \\cdot \\frac{e}{\\mathrm{C}}',
     units: [
+      {
+        mathUnit: JOULE_LABEL,
+        // J / J
+        ...proportionalHelper(1),
+      },
       {
         ...multipleLabelHelper('\\mathrm{J}'),
         series: [
