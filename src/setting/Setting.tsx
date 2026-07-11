@@ -1,4 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
+import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -55,6 +56,7 @@ export const SettingsOverlay = ({
     setFullOrder,
     selectedUnitIds,
     setSelectedUnitIds,
+    restoreDefault,
   } = useSettingStore();
 
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
@@ -266,6 +268,23 @@ export const SettingsOverlay = ({
               ) : (
                 <Typography color="textDisabled">Unit Not selected</Typography>
               )}
+            </Stack>
+          </Stack>
+
+          <Stack spacing={2}>
+            <Typography variant="h5" component="h3">
+              Danger zone
+            </Typography>
+            <Stack direction="row" spacing={3}>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => {
+                  restoreDefault();
+                }}
+              >
+                Restore default
+              </Button>
             </Stack>
           </Stack>
         </Stack>
