@@ -344,7 +344,7 @@ export const ConversionTable = () => {
       <div className="operation-menu">
         <div className="clear-button-wrapper">
           <Button variant="outlined" color="error" onClick={handleClickClear}>
-            Clear values
+            Clear all
           </Button>
         </div>
       </div>
