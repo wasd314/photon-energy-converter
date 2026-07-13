@@ -29,7 +29,6 @@ import {
 import { KatexTreeItem } from './UnitSelect';
 import {
   selectionItems,
-  selectionItemsFlattened,
   type UnitSelectionItem,
 } from './UnitSelectionItem';
 import { UnitSorterTree } from './UnitSort';
@@ -249,7 +248,6 @@ export const SettingsOverlay = ({
                 onSelectedItemsChange={handleSelectedItemsChange}
                 isItemSelectionDisabled={isItemSelectionDisabled}
                 itemChildrenIndentation={24}
-                defaultExpandedItems={selectionItemsFlattened.map((q) => q.id)}
                 selectedItems={selectedUnitIds}
                 slots={{ item: KatexTreeItem }}
               />
