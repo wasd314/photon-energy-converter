@@ -200,19 +200,19 @@ export const SettingsOverlay = ({
                   <ListItem key={key}>
                     <Stack
                       direction="row"
-                      spacing={2}
+                      spacing={1.5}
                       sx={{ alignItems: 'center' }}
                     >
                       <Typography
                         variant="body2"
-                        sx={{ minWidth: 100 }}
+                        sx={{ width: 160 }}
                         id={`${formId}-assoc-${key}`}
                       >
                         Editing{' '}
                         <InlineMath math={`X^${tripleKeyMathLabel[key]}`} />{' '}
                         recomputes
                       </Typography>
-                      <FormControl size="small" sx={{ minWidth: 60 }}>
+                      <FormControl size="small" sx={{ width: 80 }}>
                         <Select
                           aria-labelledby={`${formId}-assoc-${key}`}
                           value={tripleUpdate[key]}
