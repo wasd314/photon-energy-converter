@@ -27,10 +27,7 @@ import {
   useSettingStore,
 } from './SettingStore';
 import { KatexTreeItem } from './UnitSelect';
-import {
-  selectionItems,
-  type UnitSelectionItem,
-} from './UnitSelectionItem';
+import { selectionItems, type UnitSelectionItem } from './UnitSelectionItem';
 import { UnitSorterTree } from './UnitSort';
 
 export const SettingsOverlay = ({
