@@ -5,11 +5,14 @@ import { InlineMath } from 'react-katex';
 import {
   AVOGADRO_CONSTANT,
   BOHR_MAGNETON,
+  BOHR_RADIUS,
   BOLTZMANN_CONSTANT,
   DIRAC_CONSTANT,
   ELEMENTARY_CHARGE,
+  HARTREE_ENERGY,
   PLANCK_CONSTANT,
   SPEED_OF_LIGHT,
+  ZERO_DEGREE_CELSIUS,
 } from './Constant';
 
 interface JouleConversion {
@@ -141,24 +144,39 @@ export const quantities: Quantity[] = [
       },
       {
         ...multipleLabelHelper('\\mathrm{J}'),
-        series: [
-          {
-            mathUnit: JOULE_LABEL,
-            // J / J
-            ...proportionalHelper(1),
-          },
-          {
-            mathUnit: '\\mathrm{mJ}',
-            // J / mJ
-            ...proportionalHelper(1e3),
-          },
-        ],
+        series: siMultipleHelper({
+          toMathLabel: (prefix) => `\\mathrm{${prefix}J}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: 1,
+          multiply: 'multiply',
+        }),
       },
       {
         mathUnit: '\\mathrm{eV}',
-        // e / C
+        // eV / J = e / C
         // = e / J V^-1
         ...proportionalHelper(ELEMENTARY_CHARGE),
+      },
+      {
+        ...multipleLabelHelper('\\mathrm{eV}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}eV}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: ELEMENTARY_CHARGE,
+          multiply: 'multiply',
+        }),
+      },
+      {
+        mathUnit: 'E_{\\text{h}}',
+        // E_h / J
+        ...proportionalHelper(HARTREE_ENERGY),
+      },
+      {
+        mathUnit: '\\mathrm{Ry}',
+        // Ry / J
+        ...proportionalHelper(HARTREE_ENERGY / 2),
       },
     ],
   },
@@ -169,16 +187,36 @@ export const quantities: Quantity[] = [
       '\\frac{E}{\\mathrm{J}} = \\frac{E_\\text{m}}{\\mathrm{kJ} \\, \\mathrm{mol}^{-1}} \\cdot \\frac{N_\\text{A}^{-1}}{\\mathrm{mol}} \\cdot \\frac{\\mathrm{kJ}}{\\mathrm{J}}',
     units: [
       {
-        mathUnit: '\\mathrm{kJ} \\, \\mathrm{mol}^{-1}',
-        // N_A^-1 / ((J/kJ) mol)
-        // = (kJ/J) / (N_A mol)
-        ...proportionalHelper(1000 / AVOGADRO_CONSTANT),
+        mathUnit: '\\mathrm{J} \\, \\mathrm{mol}^{-1}',
+        // N_A^-1 / mol
+        // = (N_A / mol^-1)^-1
+        ...proportionalHelper(1 / AVOGADRO_CONSTANT),
       },
       {
-        mathUnit: '\\mathrm{kcal} \\, \\mathrm{mol}^{-1}',
-        // N_A^-1 / ((J/kcal) mol)
-        // = (kcal/J) / (N_A mol)
-        ...proportionalHelper(4184 / AVOGADRO_CONSTANT),
+        ...multipleLabelHelper('\\mathrm{J} \\, \\mathrm{mol}^{-1}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix) => `\\mathrm{${prefix}J} \\, \\mathrm{mol}^{-1}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: 1 / AVOGADRO_CONSTANT,
+          multiply: 'multiply',
+        }),
+      },
+      {
+        mathUnit: '\\mathrm{cal} \\, \\mathrm{mol}^{-1}',
+        // (N_A^-1 / mol) * (J / cal)
+        // ((J/kcal) mol)
+        ...proportionalHelper(4.184 / AVOGADRO_CONSTANT),
+      },
+      {
+        ...multipleLabelHelper('\\mathrm{cal} \\, \\mathrm{mol}^{-1}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix) => `\\mathrm{${prefix}cal} \\, \\mathrm{mol}^{-1}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: 4.184 / AVOGADRO_CONSTANT,
+          multiply: 'multiply',
+        }),
       },
     ],
   },
@@ -189,26 +227,31 @@ export const quantities: Quantity[] = [
       '\\frac{E}{\\mathrm{J}} = \\frac{\\lambda^{-1}}{\\mathrm{m}^{-1}} \\cdot \\frac{h c}{\\mathrm{J} \\, \\mathrm{m}}',
     units: [
       {
+        mathUnit: '\\mathrm{m}',
+        // h c / J m
+        ...inverseProportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT),
+      },
+      {
         ...multipleLabelHelper('\\mathrm{m}'),
-        series: [
-          {
-            mathUnit: '\\mathrm{m}',
-            // h c / J m
-            ...inverseProportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT),
-          },
-          {
-            mathUnit: '\\mathrm{nm}',
-            // h c / J nm
-            ...inverseProportionalHelper(
-              PLANCK_CONSTANT * SPEED_OF_LIGHT * 1e9
-            ),
-          },
-        ],
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}m}`,
+          helper: inverseProportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: PLANCK_CONSTANT * SPEED_OF_LIGHT,
+          multiply: 'divide',
+        }),
       },
       {
         mathUnit: '\\text{\\AA}',
         // h c / J Å
         ...inverseProportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT * 1e10),
+      },
+      {
+        mathUnit: 'a_{\\text{B}}',
+        // (h c / J m) * (m / a_B)
+        ...inverseProportionalHelper(
+          (PLANCK_CONSTANT * SPEED_OF_LIGHT) / BOHR_RADIUS
+        ),
       },
     ],
   },
@@ -219,19 +262,53 @@ export const quantities: Quantity[] = [
       '\\frac{E}{\\mathrm{J}} = \\frac{\\tilde{\\nu}}{\\mathrm{cm}^{-1}} \\cdot \\frac{h c}{\\mathrm{J} \\, \\mathrm{cm}}',
     units: [
       {
+        mathUnit: '\\mathrm{m}^{-1}',
+        // h c / J m
+        ...proportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT),
+      },
+      {
+        mathUnit: '\\mathrm{cm}^{-1}',
+        // h c / J cm
+        ...proportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT * 1e2),
+      },
+      {
         ...multipleLabelHelper('\\mathrm{m}^{-1}'),
-        series: [
-          {
-            mathUnit: '\\mathrm{m}^{-1}',
-            // h c / J m
-            ...proportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT),
-          },
-          {
-            mathUnit: '\\mathrm{cm}^{-1}',
-            // h c / J cm
-            ...proportionalHelper(PLANCK_CONSTANT * SPEED_OF_LIGHT * 1e2),
-          },
-        ],
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}m}^{-1}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: PLANCK_CONSTANT * SPEED_OF_LIGHT,
+          multiply: 'divide',
+        }),
+      },
+    ],
+  },
+  {
+    quantityName: 'Angular wavenumber',
+    mathQuantity: (index: string) => `k_{${index}}`,
+    mathConversionFormula:
+      '\\frac{E}{\\mathrm{J}} = \\frac{k}{\\mathrm{rad} \\, \\mathrm{m}^{-1}} \\cdot \\frac{\\hbar c}{\\mathrm{J} \\, \\mathrm{m} \\, \\mathrm{rad}^{-1}}',
+    units: [
+      {
+        mathUnit: '\\mathrm{rad} \\, \\mathrm{m}^{-1}',
+        // hbar c / J m rad^-1
+        ...proportionalHelper(DIRAC_CONSTANT * SPEED_OF_LIGHT),
+      },
+      {
+        mathUnit: '\\mathrm{rad} \\, \\mathrm{cm}^{-1}',
+        // hbar c / J cm rad^-1
+        ...proportionalHelper(DIRAC_CONSTANT * SPEED_OF_LIGHT * 1e2),
+      },
+      {
+        ...multipleLabelHelper('\\mathrm{rad} \\, \\mathrm{m}^{-1}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) =>
+            `\\mathrm{rad} \\, \\mathrm{${prefix}m}^{-1}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: DIRAC_CONSTANT * SPEED_OF_LIGHT,
+          multiply: 'divide',
+        }),
       },
     ],
   },
@@ -247,9 +324,14 @@ export const quantities: Quantity[] = [
         ...inverseProportionalHelper(PLANCK_CONSTANT),
       },
       {
-        mathUnit: '\\mathrm{fs}',
-        // h / J fs
-        ...inverseProportionalHelper(PLANCK_CONSTANT),
+        ...multipleLabelHelper('\\mathrm{s}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}s}`,
+          helper: inverseProportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: PLANCK_CONSTANT,
+          multiply: 'divide',
+        }),
       },
     ],
   },
@@ -265,10 +347,14 @@ export const quantities: Quantity[] = [
         ...proportionalHelper(PLANCK_CONSTANT),
       },
       {
-        mathUnit: '\\mathrm{THz}',
-        // h / J THz^-1
-        // = h / J ps
-        ...proportionalHelper(PLANCK_CONSTANT * 1e12),
+        ...multipleLabelHelper('\\mathrm{Hz}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}Hz}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: PLANCK_CONSTANT,
+          multiply: 'multiply',
+        }),
       },
     ],
   },
@@ -284,9 +370,15 @@ export const quantities: Quantity[] = [
         ...proportionalHelper(DIRAC_CONSTANT),
       },
       {
-        mathUnit: '\\mathrm{rad} \\, \\mathrm{fs}^{-1}',
-        // hbar / J fs rad^-1
-        ...proportionalHelper(DIRAC_CONSTANT * 1e15),
+        ...multipleLabelHelper('\\mathrm{rad} \\, \\mathrm{s}^{-1}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) =>
+            `\\mathrm{rad} \\, \\mathrm{${prefix}s}^{-1}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: DIRAC_CONSTANT,
+          multiply: 'divide',
+        }),
       },
     ],
   },
@@ -301,6 +393,12 @@ export const quantities: Quantity[] = [
         // k_B / J K^-1
         ...proportionalHelper(BOLTZMANN_CONSTANT),
       },
+      {
+        mathUnit: '{}^{\\circ}\\mathrm{C}',
+        // k_B / J K^-1
+        toJoule: (x: number) => (x - ZERO_DEGREE_CELSIUS) * BOLTZMANN_CONSTANT,
+        fromJoule: (x: number) => x / BOLTZMANN_CONSTANT + ZERO_DEGREE_CELSIUS,
+      },
     ],
   },
   {
@@ -313,6 +411,55 @@ export const quantities: Quantity[] = [
         mathUnit: '\\mathrm{T}',
         // µ_B / J T^-1
         ...proportionalHelper(BOHR_MAGNETON),
+      },
+      {
+        ...multipleLabelHelper('\\mathrm{T}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}T}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: BOHR_MAGNETON,
+          multiply: 'multiply',
+        }),
+      },
+    ],
+  },
+  {
+    quantityName: 'Mass equivalent',
+    mathQuantity: (index: string) => `m_{${index}}`,
+    mathConversionFormula:
+      '\\frac{E}{\\mathrm{J}} = \\frac{m}{\\mathrm{kg}} \\cdot \\frac{c^2}{\\mathrm{m}^2 \\, \\mathrm{s}^{-2}}',
+    units: [
+      {
+        mathUnit: '\\mathrm{g}',
+        // (c^2 / J kg^-1) * (g / kg)
+        // = (c^2 / m^2 s^-2) * (g / kg)
+        ...proportionalHelper(SPEED_OF_LIGHT ** 2 / 1e3),
+      },
+      {
+        ...multipleLabelHelper('\\mathrm{g}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}g}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: SPEED_OF_LIGHT ** 2 / 1e3,
+          multiply: 'multiply',
+        }),
+      },
+      {
+        mathUnit: '\\mathrm{eV}/c^2',
+        // (c^2 / m^2 s^-2) * (J / eV)
+        ...proportionalHelper(ELEMENTARY_CHARGE * SPEED_OF_LIGHT ** 2),
+      },
+      {
+        ...multipleLabelHelper('\\mathrm{eV}/c^2'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}eV}/c^2`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: ELEMENTARY_CHARGE * SPEED_OF_LIGHT ** 2,
+          multiply: 'multiply',
+        }),
       },
     ],
   },

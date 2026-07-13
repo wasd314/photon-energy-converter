@@ -16,8 +16,14 @@ export const ELEMENTARY_CHARGE = 1.602176634e-19;
 /** N_A / mol^{-1} */
 export const AVOGADRO_CONSTANT = 6.02214076e23;
 
-/** µ_B / J T^{-1} (not a defining constant; 2022 CODATA recommended values) */
+/** E_h / J (2022 CODATA recommended value) */
+export const HARTREE_ENERGY = 4.359744722206e-18;
+
+/** µ_B / J T^{-1} (2022 CODATA recommended value) */
 export const BOHR_MAGNETON = 9.2740100657e-24;
+
+/** a_B / m (2022 CODATA recommended value) */
+export const BOHR_RADIUS = 5.29177210544e-11;
 
 /** 0 °C in K */
 export const ZERO_DEGREE_CELSIUS = 273.15;
