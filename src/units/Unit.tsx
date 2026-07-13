@@ -195,7 +195,8 @@ export const quantities: Quantity[] = [
       {
         ...multipleLabelHelper('\\mathrm{J} \\, \\mathrm{mol}^{-1}'),
         series: siMultipleHelper({
-          toMathLabel: (prefix) => `\\mathrm{${prefix}J} \\, \\mathrm{mol}^{-1}`,
+          toMathLabel: (prefix) =>
+            `\\mathrm{${prefix}J} \\, \\mathrm{mol}^{-1}`,
           helper: proportionalHelper,
           prefixes: siPrefixes,
           baseCoeff: 1 / AVOGADRO_CONSTANT,
@@ -211,7 +212,8 @@ export const quantities: Quantity[] = [
       {
         ...multipleLabelHelper('\\mathrm{cal} \\, \\mathrm{mol}^{-1}'),
         series: siMultipleHelper({
-          toMathLabel: (prefix) => `\\mathrm{${prefix}cal} \\, \\mathrm{mol}^{-1}`,
+          toMathLabel: (prefix) =>
+            `\\mathrm{${prefix}cal} \\, \\mathrm{mol}^{-1}`,
           helper: proportionalHelper,
           prefixes: siPrefixes,
           baseCoeff: 4.184 / AVOGADRO_CONSTANT,
@@ -448,8 +450,8 @@ export const quantities: Quantity[] = [
       },
       {
         mathUnit: '\\mathrm{eV}/c^2',
-        // (c^2 / m^2 s^-2) * (J / eV)
-        ...proportionalHelper(ELEMENTARY_CHARGE * SPEED_OF_LIGHT ** 2),
+        // J / eV
+        ...proportionalHelper(ELEMENTARY_CHARGE),
       },
       {
         ...multipleLabelHelper('\\mathrm{eV}/c^2'),
@@ -457,7 +459,7 @@ export const quantities: Quantity[] = [
           toMathLabel: (prefix: string) => `\\mathrm{${prefix}eV}/c^2`,
           helper: proportionalHelper,
           prefixes: siPrefixes,
-          baseCoeff: ELEMENTARY_CHARGE * SPEED_OF_LIGHT ** 2,
+          baseCoeff: ELEMENTARY_CHARGE,
           multiply: 'multiply',
         }),
       },
