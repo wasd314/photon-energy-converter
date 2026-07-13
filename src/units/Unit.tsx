@@ -87,25 +87,6 @@ const siPrefixes: SiPrefix[] = [
   { prefix: 'f', multiple: 1e-15 },
   { prefix: 'a', multiple: 1e-18 },
 ];
-const inclusiveSlice = ({
-  siPrefixes: prefixes,
-  start,
-  stop,
-}: {
-  siPrefixes: SiPrefix[];
-  start?: string;
-  stop?: string;
-}) => {
-  const il =
-    start === undefined
-      ? undefined
-      : prefixes.indexOf(prefixes.find((prefix) => prefix.prefix === start)!);
-  const ir =
-    stop === undefined
-      ? undefined
-      : prefixes.indexOf(prefixes.find((prefix) => prefix.prefix === stop)!);
-  return prefixes.slice(il, ir);
-};
 
 interface SiMultipleHelperProps {
   toMathLabel: (prefix: string) => string;
@@ -334,6 +315,12 @@ export const quantities: Quantity[] = [
           baseCoeff: PLANCK_CONSTANT,
           multiply: 'divide',
         }),
+      },
+      {
+        mathUnit: '\\hbar E_{\\text{h}}^{-1}',
+        // h / (J hbar/E_h)
+        // = 2 pi E_h / J
+        ...inverseProportionalHelper(2 * Math.PI * HARTREE_ENERGY),
       },
     ],
   },
