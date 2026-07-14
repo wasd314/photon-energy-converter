@@ -107,7 +107,7 @@ export const SettingsOverlay = ({
             </Typography>
 
             <Stack spacing={1}>
-              <Typography variant="subtitle1">Header information</Typography>
+              <Typography variant="h6">Header information</Typography>
               <FormGroup>
                 <FormControlLabel
                   control={
@@ -131,9 +131,7 @@ export const SettingsOverlay = ({
             </Stack>
 
             <Stack spacing={1}>
-              <Typography variant="subtitle1">
-                Number of value series
-              </Typography>
+              <Typography variant="h6">Number of value series</Typography>
               <Stack direction="row" spacing={1}>
                 <NumberSpinner
                   label="Single mode"
@@ -167,7 +165,7 @@ export const SettingsOverlay = ({
             </Stack>
 
             <Stack sx={{ alignItems: 'flex-start' }}>
-              <Typography variant="subtitle1">Calculation precision</Typography>
+              <Typography variant="h6">Calculation precision</Typography>
               <NumberSpinner
                 label="Significant digits"
                 min={1}
@@ -181,9 +179,7 @@ export const SettingsOverlay = ({
             </Stack>
 
             <Stack spacing={1} sx={{ alignItems: 'flex-start' }}>
-              <Typography variant="subtitle1">
-                Edit propagation in Triple mode
-              </Typography>
+              <Typography variant="h6">Propagation in Triple mode</Typography>
               <Typography variant="subtitle2">
                 To keep the invariant{' '}
                 <InlineMath
@@ -206,7 +202,7 @@ export const SettingsOverlay = ({
                       >
                         Editing{' '}
                         <InlineMath math={`X^${tripleKeyMathLabel[key]}`} />{' '}
-                        recomputes
+                        updates
                       </Typography>
                       <FormControl size="small" sx={{ width: 80 }}>
                         <Select
@@ -237,7 +233,7 @@ export const SettingsOverlay = ({
               Quantities, Units
             </Typography>
             <Stack>
-              <Typography variant="subtitle1">Unit Select</Typography>
+              <Typography variant="h6">Unit Select</Typography>
               <RichTreeView
                 items={selectionItems}
                 multiSelect
@@ -250,7 +246,7 @@ export const SettingsOverlay = ({
               />
             </Stack>
             <Stack>
-              <Typography variant="subtitle1">Order</Typography>
+              <Typography variant="h6">Order</Typography>
               <Typography variant="subtitle2">
                 Drag and drop to rearrange items.
               </Typography>
