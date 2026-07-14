@@ -386,7 +386,7 @@ export const quantities: Quantity[] = [
         mathUnit: '{}^{\\circ}\\mathrm{C}',
         // k_B / J K^-1
         toJoule: (x: number) => (x - ZERO_DEGREE_CELSIUS) * BOLTZMANN_CONSTANT,
-        fromJoule: (x: number) => x / BOLTZMANN_CONSTANT + ZERO_DEGREE_CELSIUS,
+        fromJoule: (x: number) => x / BOLTZMANN_CONSTANT - ZERO_DEGREE_CELSIUS,
       },
     ],
   },
