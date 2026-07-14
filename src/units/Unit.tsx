@@ -151,6 +151,21 @@ export const quantities: Quantity[] = [
         }),
       },
       {
+        mathUnit: '\\mathrm{cal}',
+        // cal / J
+        ...proportionalHelper(CALORIE_PER_JOULE),
+      },
+      {
+        ...multipleLabelHelper('\\mathrm{cal}'),
+        series: siMultipleHelper({
+          toMathLabel: (prefix: string) => `\\mathrm{${prefix}cal}`,
+          helper: proportionalHelper,
+          prefixes: siPrefixes,
+          baseCoeff: CALORIE_PER_JOULE,
+          multiply: 'multiply',
+        }),
+      },
+      {
         mathUnit: 'E_{\\text{h}}',
         // E_h / J
         ...proportionalHelper(HARTREE_ENERGY),
