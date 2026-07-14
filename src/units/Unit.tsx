@@ -7,6 +7,7 @@ import {
   BOHR_MAGNETON,
   BOHR_RADIUS,
   BOLTZMANN_CONSTANT,
+  CALORIE_PER_JOULE,
   DIRAC_CONSTANT,
   ELEMENTARY_CHARGE,
   HARTREE_ENERGY,
@@ -186,9 +187,8 @@ export const quantities: Quantity[] = [
       },
       {
         mathUnit: '\\mathrm{cal} \\, \\mathrm{mol}^{-1}',
-        // (N_A^-1 / mol) * (J / cal)
-        // ((J/kcal) mol)
-        ...proportionalHelper(4.184 / AVOGADRO_CONSTANT),
+        // (N_A^-1 / mol) * (cal / J)
+        ...proportionalHelper(CALORIE_PER_JOULE / AVOGADRO_CONSTANT),
       },
       {
         ...multipleLabelHelper('\\mathrm{cal} \\, \\mathrm{mol}^{-1}'),
@@ -197,7 +197,7 @@ export const quantities: Quantity[] = [
             `\\mathrm{${prefix}cal} \\, \\mathrm{mol}^{-1}`,
           helper: proportionalHelper,
           prefixes: siPrefixes,
-          baseCoeff: 4.184 / AVOGADRO_CONSTANT,
+          baseCoeff: CALORIE_PER_JOULE / AVOGADRO_CONSTANT,
           multiply: 'multiply',
         }),
       },

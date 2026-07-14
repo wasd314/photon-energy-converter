@@ -27,3 +27,6 @@ export const BOHR_RADIUS = 5.29177210544e-11;
 
 /** 0 °C in K */
 export const ZERO_DEGREE_CELSIUS = 273.15;
+
+/** thermochemical calorie / J */
+export const CALORIE_PER_JOULE = 4.184;
