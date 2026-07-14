@@ -197,7 +197,7 @@ export const SettingsOverlay = ({
                     >
                       <Typography
                         variant="body2"
-                        sx={{ width: 160 }}
+                        sx={{ width: 130 }}
                         id={`${formId}-assoc-${key}`}
                       >
                         Editing{' '}
