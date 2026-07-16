@@ -1,209 +1,30 @@
 import 'katex/dist/katex.min.css';
 import './ConversionTable.css';
-import { useState, type JSX } from 'react';
+import Button from '@mui/material/Button';
+import { enableMapSet } from 'immer';
+import { type JSX, useMemo } from 'react';
 import { BlockMath, InlineMath } from 'react-katex';
-import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
+import { useImmer } from 'use-immer';
+import {
+  type TripleKeys,
+  tripleKeyMathLabel,
+  useSettingStore,
+} from './setting/SettingStore';
+import { selectionItemsFlattened } from './setting/UnitSelectionItem';
+import { JOULE_LABEL, quantityMaps, unitMap } from './units/Unit';
 
-interface UnitProps {
-  /** 1 {この単位} が x J に相当するときの x */
-  coefficient: number;
-  /** katex 表示の単位 */
-  mathUnit: string;
-}
-interface QuantityCalcProps {
-  /** true: 正比例, false: 反比例 */
-  proportional: boolean;
-}
-interface QuantityProps extends QuantityCalcProps {
-  /** 物理量の名前 */
-  quantityName: string;
-  /** katex 表示の物理量 */
-  mathQuantity: string;
-  /** katex 表示のエネルギーへの変換公式 */
-  mathConversionFormula: string;
-  units: UnitProps[];
-}
-const quantities: QuantityProps[] = [
-  {
-    proportional: true,
-    quantityName: 'Energy',
-    mathQuantity: 'E',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{E}{\\mathrm{eV}} \\cdot \\frac{e}{\\mathrm{C}}',
-    units: [
-      {
-        // J / J
-        coefficient: 1,
-        mathUnit: '\\mathrm{J}',
-      },
-      {
-        // e / C
-        // = e / J V^-1
-        coefficient: 1.602176634e-19,
-        mathUnit: '\\mathrm{eV}',
-      },
-    ],
-  },
-  {
-    proportional: true,
-    quantityName: 'Molar energy',
-    mathQuantity: 'E_\\text{m}',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{E_\\text{m}}{\\mathrm{kJ} \\, \\mathrm{mol}^{-1}} \\cdot \\frac{N_\\text{A}^{-1}}{\\mathrm{mol}} \\cdot \\frac{\\mathrm{kJ}}{\\mathrm{J}}',
-    units: [
-      {
-        // N_A^-1 / ((J/kJ) mol)
-        // = (kJ/J) / (N_A mol)
-        coefficient: 1000 / 6.02214076e23,
-        mathUnit: '\\mathrm{kJ} \\, \\mathrm{mol}^{-1}',
-      },
-      {
-        // N_A^-1 / ((J/kcal) mol)
-        // = (kcal/J) / (N_A mol)
-        coefficient: 4184 / 6.02214076e23,
-        mathUnit: '\\mathrm{kcal} \\, \\mathrm{mol}^{-1}',
-      },
-    ],
-  },
-  {
-    proportional: false,
-    quantityName: 'Wavelength',
-    mathQuantity: '\\lambda',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{\\lambda^{-1}}{\\mathrm{m}^{-1}} \\cdot \\frac{h c}{\\mathrm{J} \\, \\mathrm{m}}',
-    units: [
-      {
-        // h c / J m
-        // eslint-disable-next-line no-loss-of-precision
-        coefficient: 1.9864458571489287e-25,
-        mathUnit: '\\mathrm{m}',
-      },
-      {
-        // h c / J nm
-        coefficient: 1.9864458571489287e-16,
-        mathUnit: '\\mathrm{nm}',
-      },
-    ],
-  },
-  {
-    proportional: true,
-    quantityName: 'Wavenumber',
-    mathQuantity: '\\tilde{\\nu}',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{\\tilde{\\nu}}{\\mathrm{cm}^{-1}} \\cdot \\frac{h c}{\\mathrm{J} \\, \\mathrm{cm}}',
-    units: [
-      {
-        // h c / J cm
-        // eslint-disable-next-line no-loss-of-precision
-        coefficient: 1.9864458571489287e-23,
-        mathUnit: '\\mathrm{cm}^{-1}',
-      },
-    ],
-  },
-  {
-    proportional: false,
-    quantityName: 'Period',
-    mathQuantity: '\\tau',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{\\tau^{-1}}{\\mathrm{s}^{-1}} \\cdot \\frac{h}{\\mathrm{J} \\, \\mathrm{s}}',
-    units: [
-      {
-        // h / J s
-        coefficient: 6.62607015e-34,
-        mathUnit: '\\mathrm{s}',
-      },
-      {
-        // h / J fs
-        coefficient: 6.62607015e-19,
-        mathUnit: '\\mathrm{fs}',
-      },
-    ],
-  },
-  {
-    proportional: true,
-    quantityName: 'Frequency',
-    mathQuantity: '\\nu',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{\\nu}{\\mathrm{Hz}} \\cdot \\frac{h}{\\mathrm{J} \\, \\mathrm{s}}',
-    units: [
-      {
-        // h / J s
-        coefficient: 6.62607015e-34,
-        mathUnit: '\\mathrm{Hz}',
-      },
-      {
-        // h / J THz^-1
-        // = h / J ps
-        coefficient: 6.62607015e-22,
-        mathUnit: '\\mathrm{THz}',
-      },
-    ],
-  },
-  {
-    proportional: true,
-    quantityName: 'Angular frequency',
-    mathQuantity: '\\omega',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{\\omega}{\\mathrm{rad} \\, \\mathrm{s}^{-1}} \\cdot \\frac{\\hbar}{\\mathrm{J} \\, \\mathrm{s} \\, \\mathrm{rad}^{-1}}',
-    units: [
-      {
-        // hbar / J s rad^-1
-        coefficient: 6.62607015e-34 / (2 * Math.PI),
-        mathUnit: '\\mathrm{rad} \\, \\mathrm{s}^{-1}',
-      },
-      {
-        // hbar / J fs rad^-1
-        coefficient: 6.62607015e-19 / (2 * Math.PI),
-        mathUnit: '\\mathrm{rad} \\, \\mathrm{fs}^{-1}',
-      },
-    ],
-  },
-  {
-    proportional: true,
-    quantityName: 'Temperature',
-    mathQuantity: 'T',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{T}{\\mathrm{K}} \\cdot \\frac{k_\\text{B}}{\\mathrm{J} \\, \\mathrm{K}^{-1}}',
-    units: [
-      {
-        // k_B / J K^-1
-        coefficient: 1.380649e-23,
-        mathUnit: '\\mathrm{K}',
-      },
-    ],
-  },
-  {
-    proportional: true,
-    quantityName: 'Magnetic flux density',
-    mathQuantity: 'B',
-    mathConversionFormula:
-      '\\frac{E}{\\mathrm{J}} = \\frac{B}{\\mathrm{T}} \\cdot \\frac{\\mu_\\text{B}}{\\mathrm{J} \\, \\mathrm{T}^{-1}}',
-    units: [
-      {
-        // µ_B / J T^-1
-        // (not a defining constant)
-        coefficient: 9.2740100783e-24,
-        mathUnit: '\\mathrm{T}',
-      },
-    ],
-  },
-];
-
-interface UnitCalcProps extends UnitProps, QuantityCalcProps {}
-
-const units: UnitCalcProps[] = quantities.flatMap((quantity) =>
-  quantity.units.map((unit) => ({
-    ...unit,
-    proportional: quantity.proportional,
-  }))
-);
+enableMapSet();
 
 interface UnitRowProps {
-  index: number;
+  index: ColumnIndex;
   mathQuantity: string;
   mathUnit: string;
   text: string;
-  recordCellUpdate: (newText: string, index: number) => void;
+  recordCellUpdate: (
+    columnIndex: ColumnIndex,
+    updatedUnit: string,
+    updatedText: string
+  ) => void;
 }
 const UnitRow = ({
   index,
@@ -213,10 +34,10 @@ const UnitRow = ({
   recordCellUpdate,
 }: UnitRowProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    recordCellUpdate(e.target.value, index);
+    recordCellUpdate(index, mathUnit, e.target.value);
   };
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    recordCellUpdate(e.target.value, index);
+    recordCellUpdate(index, mathUnit, e.target.value);
   };
   return (
     <div className="unit-row">
@@ -242,126 +63,291 @@ const UnitRow = ({
   );
 };
 
-const ConversionTable = () => {
-  const [texts, setTexts] = useState(Array(units.length).fill(''));
-  const [showQuantityName, setShowQuantityName] = useState(true);
-  const [showFormulae, setShowFormulae] = useState(false);
-  // 更新後の文字列が newEnergy: number と解釈できたときにそれを他のセルに反映する
-  const updateCellsWithEnergy = (
-    newEnergy: number,
-    textUpdated: string,
-    indexUpdated: number
-  ) => {
-    const newTexts = units.map(({ coefficient, proportional }, index) => {
-      if (index == indexUpdated) return textUpdated;
-      const newValue = proportional
-        ? newEnergy / coefficient
-        : coefficient / newEnergy;
-      return newValue.toPrecision(10);
-    });
-    setTexts(newTexts);
-  };
-  // 1セルへの更新を記録する（入力途中でも）
-  const recordCellUpdate = (newText: string, indexUpdated: number) => {
-    const newTexts = texts.slice();
-    newTexts[indexUpdated] = newText;
-    setTexts(newTexts);
+type ConversionTableTextColumn =
+  | {
+      tag: 'single';
+      column: Map<string, string>;
+    }
+  | {
+      tag: 'triple';
+      column: Record<TripleKeys, Map<string, string>>;
+    };
 
+type ColumnIndex =
+  | { tag: 'single'; index: number }
+  | { tag: 'triple'; index: [number, TripleKeys] };
+
+export const ConversionTable = () => {
+  const showQuantityName = useSettingStore((state) => state.showQuantityName);
+  const showFormulae = useSettingStore((state) => state.showFormulae);
+  const columnNumber = useSettingStore((state) => state.columnNumber);
+  const tripleUpdate = useSettingStore((state) => state.tripleUpdate);
+  const precision = useSettingStore((state) => state.precision);
+  const fullOrder = useSettingStore((store) => store.fullOrder);
+  const selectedUnitIds = useSettingStore((store) => store.selectedUnitIds);
+  const selectedIdSet = useMemo(() => {
+    const set = new Set(selectedUnitIds);
+    const quantities = selectionItemsFlattened.flatMap((quantity) => {
+      return quantity.children?.some((unit) => set.has(unit.id))
+        ? [quantity.label]
+        : [];
+    });
+    return new Set([...selectedUnitIds, ...quantities]);
+  }, [selectedUnitIds]);
+
+  const initMap = () =>
+    new Map(fullOrder.flatMap(([_, units]) => units.map((unit) => [unit, ''])));
+  const emptyTable: () => ConversionTableTextColumn[] = () => {
+    return Array.from(
+      { length: columnNumber.single + columnNumber.triple },
+      (_, i) => {
+        if (i < columnNumber.single) {
+          return { tag: 'single', column: initMap() };
+        } else {
+          return {
+            tag: 'triple',
+            column: { plus: initMap(), minus: initMap(), diff: initMap() },
+          };
+        }
+      }
+    );
+  };
+  const [texts, setTexts] = useImmer(emptyTable());
+
+  // reset texts if columnNumber is different
+  {
+    const currentColumnNumber = {
+      single: texts.reduce(
+        (acc, col) => acc + (col.tag === 'single' ? 1 : 0),
+        0
+      ),
+      triple: texts.reduce(
+        (acc, col) => acc + (col.tag === 'triple' ? 1 : 0),
+        0
+      ),
+    };
+    if (
+      columnNumber.single !== currentColumnNumber.single ||
+      columnNumber.triple !== currentColumnNumber.triple
+    ) {
+      setTexts((texts) => {
+        const textsSingle = texts.filter((col) => col.tag === 'single');
+        const textsTriple = texts.filter((col) => col.tag === 'triple');
+        return [
+          ...Array.from({ length: columnNumber.single }, (_, i) =>
+            i < textsSingle.length
+              ? textsSingle[i]
+              : { tag: 'single', column: initMap() }
+          ),
+          ...Array.from({ length: columnNumber.triple }, (_, i) =>
+            i < textsTriple.length
+              ? textsTriple[i]
+              : {
+                  tag: 'triple',
+                  column: {
+                    plus: initMap(),
+                    minus: initMap(),
+                    diff: initMap(),
+                  },
+                }
+          ),
+        ];
+      });
+    }
+  }
+
+  // 更新後の文字列が number と解釈できたときにそれを他のセルに反映する
+  const newColumnFromJoule = (
+    newJoule: number,
+    updatedUnit: string,
+    updatedText: string
+  ) => {
+    return new Map(
+      Array.from(quantityMaps.values()).flatMap((quantity) =>
+        quantity.units.map((unit) => [
+          unit.mathUnit,
+          unit.mathUnit === updatedUnit
+            ? updatedText
+            : unit.fromJoule(newJoule).toPrecision(precision),
+        ])
+      )
+    );
+  };
+  const parseText = (unit: string, newText: string | undefined) => {
+    const unitInfo = unitMap.get(unit);
     const valueParsed = Number(newText);
     // Number('') === +0: number
-    if (newText === '' || Number.isNaN(valueParsed)) return;
-    const { proportional, coefficient } = units[indexUpdated];
-    const newEnergy = proportional
-      ? valueParsed * coefficient
-      : coefficient / valueParsed;
-    updateCellsWithEnergy(newEnergy, newText, indexUpdated);
+    if (newText === '' || Number.isNaN(valueParsed) || unitInfo === undefined)
+      return;
+    return unitInfo.toJoule(valueParsed);
   };
 
-  const handleChangeShowQuantityName = (
-    e: React.ChangeEvent<HTMLInputElement>
+  // 1セルへの更新を記録する（入力途中でも）
+  const recordCellUpdate = (
+    columnIndex: ColumnIndex,
+    updatedUnit: string,
+    updatedText: string
   ) => {
-    setShowQuantityName(e.target.checked);
-  };
-  const handleChangeShowFormulae = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowFormulae(e.target.checked);
-  };
-  const handleClickClear = () => {
-    setTexts(Array(units.length).fill(''));
+    const { tag, index } = columnIndex;
+    setTexts((texts) => {
+      const newJoule = parseText(updatedUnit, updatedText);
+      if (tag === 'single') {
+        if (texts[index].tag !== tag) return;
+        if (newJoule === undefined) {
+          texts[index].column.set(updatedUnit, updatedText);
+          return;
+        }
+        texts[index].column = newColumnFromJoule(
+          newJoule,
+          updatedUnit,
+          updatedText
+        );
+      } else {
+        const columns = texts[index[0]];
+        if (columns.tag !== tag) return;
+        if (newJoule === undefined) {
+          columns.column[index[1]].set(updatedUnit, updatedText);
+          return;
+        }
+        columns.column[index[1]] = newColumnFromJoule(
+          newJoule,
+          updatedUnit,
+          updatedText
+        );
+
+        // To keep invariant, edit followingKey based on newJoule and fixedJoule
+        const followingKey = tripleUpdate[index[1]];
+        const joules = {
+          plus: parseText(JOULE_LABEL, columns.column.plus.get(JOULE_LABEL)),
+          minus: parseText(JOULE_LABEL, columns.column.minus.get(JOULE_LABEL)),
+          diff: parseText(JOULE_LABEL, columns.column.diff.get(JOULE_LABEL)),
+        };
+
+        if (
+          followingKey === 'plus' &&
+          joules.minus !== undefined &&
+          joules.diff !== undefined
+        )
+          columns.column.plus = newColumnFromJoule(
+            joules.minus + joules.diff,
+            '',
+            ''
+          );
+        if (
+          followingKey === 'minus' &&
+          joules.plus !== undefined &&
+          joules.diff !== undefined
+        )
+          columns.column.minus = newColumnFromJoule(
+            joules.plus - joules.diff,
+            '',
+            ''
+          );
+        if (
+          followingKey === 'diff' &&
+          joules.plus !== undefined &&
+          joules.minus !== undefined
+        )
+          columns.column.diff = newColumnFromJoule(
+            joules.plus - joules.minus,
+            '',
+            ''
+          );
+      }
+    });
   };
 
-  let unitIndex = 0;
-  const quantityBlocks = quantities.map(
-    ({ quantityName, mathQuantity, mathConversionFormula, units }) => {
-      const rows: JSX.Element[] = [];
-      if (showQuantityName) {
-        rows.push(
-          <div className="quantity-header" key="quantityName">
-            {quantityName}
-          </div>
-        );
-      }
-      if (showFormulae) {
-        rows.push(
-          <div key="conversionFormula">
-            <BlockMath math={mathConversionFormula} />
-          </div>
-        );
-      }
-      rows.push(
-        ...units.map((unit, i) => {
-          const index = unitIndex + i;
-          return (
-            <UnitRow
-              key={unit.mathUnit}
-              index={index}
-              mathQuantity={i === 0 ? mathQuantity : ''}
-              mathUnit={unit.mathUnit}
-              text={texts[index]}
-              recordCellUpdate={recordCellUpdate}
-            />
-          );
+  const handleClickClear = () => {
+    setTexts(emptyTable());
+  };
+
+  const quantityBlocks = fullOrder.map(([quantityName, unitIds]) => {
+    const quantity = quantityMaps.get(quantityName);
+    if (quantity === undefined || !selectedIdSet.has(quantityName)) return;
+    const { mathQuantity, mathConversionFormula, unitMap } = quantity;
+
+    const rows: JSX.Element[] = [];
+
+    const units = unitIds.flatMap((unitId) => {
+      const unit = unitMap.get(unitId);
+      return unit === undefined || !selectedIdSet.has(unitId) ? [] : [unit];
+    });
+
+    rows.push(
+      ...texts
+        .map(({ tag, column }, i) => {
+          const index = `${i + 1}`;
+          if (tag === 'single') {
+            return [
+              units.map(({ mathUnit }, j) => (
+                <UnitRow
+                  key={`${i}--${j}`}
+                  index={{ tag: 'single', index: i }}
+                  mathQuantity={j === 0 ? mathQuantity(index) : ''}
+                  mathUnit={mathUnit}
+                  text={column.get(mathUnit)!}
+                  recordCellUpdate={recordCellUpdate}
+                />
+              )),
+            ];
+          } else {
+            return (['plus', 'minus', 'diff'] as const).map((key) => {
+              const col = column[key];
+              return units.map(({ mathUnit }, j) => (
+                <UnitRow
+                  key={`${i}--${key}--${j}`}
+                  index={{ tag: 'triple', index: [i, key] }}
+                  mathQuantity={
+                    j === 0
+                      ? `${mathQuantity(index)}^{${tripleKeyMathLabel[key]}}`
+                      : ''
+                  }
+                  mathUnit={mathUnit}
+                  text={col.get(mathUnit)!}
+                  recordCellUpdate={recordCellUpdate}
+                />
+              ));
+            });
+          }
         })
-      );
-      unitIndex += units.length;
-      return (
-        <div key={quantityName} className="quantity-block">
-          {rows}
+        .map((rows, i) => (
+          <div key={i} className="unit-columns-bundle">
+            {rows.map((row, j) => (
+              <div key={j} className="unit-column-bundle">
+                {row}
+              </div>
+            ))}
+          </div>
+        ))
+    );
+    return (
+      <div key={quantityName} className="quantity-block">
+        <div className="quantity-header">
+          {showQuantityName && (
+            <div className="quantity-name" key="quantityName">
+              {quantityName}
+            </div>
+          )}
+          {showFormulae && (
+            <div key="conversionFormula">
+              <BlockMath math={mathConversionFormula} />
+            </div>
+          )}
         </div>
-      );
-    }
-  );
+        <div className="quantity-block-body">{rows}</div>
+      </div>
+    );
+  });
   return (
     <>
       <div className="conversion-table-container">{quantityBlocks}</div>
       <div className="operation-menu">
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showQuantityName}
-                onChange={handleChangeShowQuantityName}
-              />
-            }
-            label="Show quantity names"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showFormulae}
-                onChange={handleChangeShowFormulae}
-              />
-            }
-            label="Show conversion formulae"
-          />
-        </FormGroup>
         <div className="clear-button-wrapper">
           <Button variant="outlined" color="error" onClick={handleClickClear}>
-            Clear values
+            Clear all
           </Button>
         </div>
       </div>
     </>
   );
 };
-
-export default ConversionTable;

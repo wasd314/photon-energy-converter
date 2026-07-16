@@ -12,15 +12,39 @@
 .quantity-header {
   font-weight: bold;
   margin-bottom: 5px;
+  width: 100%;
+}
+.quantity-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.quantity-block-body {
+  columns: 320px;
 }
 
+.unit-columns-bundle {
+  padding: 3px 0;
+  break-inside: avoid;
+}
+.unit-column-bundle {
+  break-inside: avoid;
+}
 .unit-row {
   display: grid;
-  grid-template-columns: 30px 22px 150px 90px;
+  grid-template-columns: 50px 22px auto 100px;
+  height: 25px;
+  text-align: left;
+}
+
+.unit-row > div {
+  padding: 0 3px;
 }
 
 .value-input {
-  width: calc(100% - 20px);
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+  padding: 1px 2px;
 }
 
 .clear-button-wrapper {
