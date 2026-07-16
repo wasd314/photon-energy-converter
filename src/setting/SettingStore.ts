@@ -47,7 +47,7 @@ export const defaultSettings: () => SettingStoreState = () => ({
   showFormulae: false,
   columnNumber: {
     single: 1,
-    triple: 1,
+    triple: 0,
   },
   tripleUpdate: {
     plus: 'minus',
@@ -56,7 +56,23 @@ export const defaultSettings: () => SettingStoreState = () => ({
   },
   precision: 10,
   fullOrder: fullOrderInitial,
-  selectedUnitIds: [],
+  selectedUnitIds: [
+    '\\mathrm{J}',
+    '\\mathrm{eV}',
+    '\\mathrm{kJ} \\, \\mathrm{mol}^{-1}',
+    '\\mathrm{kcal} \\, \\mathrm{mol}^{-1}',
+    '\\mathrm{m}',
+    '\\mathrm{nm}',
+    '\\mathrm{cm}^{-1}',
+    '\\mathrm{s}',
+    '\\mathrm{fs}',
+    '\\mathrm{Hz}',
+    '\\mathrm{THz}',
+    '\\mathrm{rad} \\, \\mathrm{s}^{-1}',
+    '\\mathrm{rad} \\, \\mathrm{fs}^{-1}',
+    '\\mathrm{K}',
+    '\\mathrm{T}',
+  ],
 });
 
 export const useSettingStore = create<SettingStore>()(
