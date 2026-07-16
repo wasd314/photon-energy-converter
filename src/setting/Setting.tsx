@@ -180,7 +180,7 @@ export const SettingsOverlay = ({
 
             <Stack spacing={1} sx={{ alignItems: 'flex-start' }}>
               <Typography variant="h6">Propagation in Triple mode</Typography>
-              <Typography variant="subtitle2">
+              <Typography variant="body2">
                 To keep the invariant{' '}
                 <InlineMath
                   math={`X^${tripleKeyMathLabel.plus} - X^${tripleKeyMathLabel.minus} = X^${tripleKeyMathLabel.diff}`}
@@ -233,7 +233,7 @@ export const SettingsOverlay = ({
               Quantities, Units
             </Typography>
             <Stack>
-              <Typography variant="h6">Unit Select</Typography>
+              <Typography variant="h6">Unit selection</Typography>
               <RichTreeView
                 items={selectionItems}
                 multiSelect
@@ -246,7 +246,7 @@ export const SettingsOverlay = ({
               />
             </Stack>
             <Stack>
-              <Typography variant="h6">Order</Typography>
+              <Typography variant="h6">Unit order</Typography>
               <Typography variant="subtitle2">
                 Drag and drop to rearrange items.
               </Typography>
@@ -257,7 +257,7 @@ export const SettingsOverlay = ({
                   selectedIds={selectedUnitIds}
                 />
               ) : (
-                <Typography color="textDisabled">Unit Not selected</Typography>
+                <Typography color="textDisabled">No units selected</Typography>
               )}
             </Stack>
           </Stack>
